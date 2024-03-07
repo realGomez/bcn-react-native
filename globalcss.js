@@ -32,6 +32,19 @@ export default {
     primaryButtonText: {
         textAlign: 'center',
         color: '#ffffff'
+    },
+    secondaryButton: {
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'row',
+        // backgroundColor: '#245798',
+        borderRadius: 6
+
+    },
+    secondaryButtonText: {
+        textAlign: 'center',
+        color: '#245798'
     }
 
 

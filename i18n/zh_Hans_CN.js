@@ -40,5 +40,15 @@ export default {
     'global.city':'城市',
     'global.save':'保存',
     'global.addNewAddress"':'新增地址',
-    'global.finger':'指纹登入'
+    'global.finger':'指纹登入',
+    'login.loginWithBiometrics':'指纹/脸部识别登入',
+    'login.cancel':'取消',
+    'login.fingerprintInvalid':'指纹失效，请用密码登入重新验证',
+    'modal.confirm':'确认',
+    'modal.cancel':'取消',
+    'login.biometricsLoginSetting':'指纹/脸部识别登入设置',
+    'login.biometricsSettingTitle':'试一试快捷登入',
+    'tab.biometricsVerify':'安全验证',
+    'biometricsVerify.loginWithBiometrics':'指纹/脸部识别登入',
+    'myAccount.biometricsVerify':'安全验证'
 }

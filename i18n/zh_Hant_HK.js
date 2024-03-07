@@ -33,7 +33,9 @@ export default {
     'tab.editAddress':'编辑地址',
     'global.firstname':'名字',
     'global.telephone':'电话',
-    'global.street':'街道'
+    'global.street':'街道',
+    'login.LoginWithBiometrics':'指纹/脸部识别登入',
+    'login.cancel':'取消'
 
 
 }

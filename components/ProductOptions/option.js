@@ -15,7 +15,6 @@ import {
 import getOptionType from './getOptionType';
 import SwatchList from './swatchList';
 import TileList from './tileList';
-import defaultClasses from './option.css';
 import { useOption } from './useOption';
 import globalcss from '../../globalcss';
 

@@ -1,58 +1,66 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Pressable, TextInput, TouchableHighlight } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Image, ScrollView, Pressable, TextInput, TouchableHighlight, Alert, Modal } from 'react-native';
 import globalcss from '../../globalcss';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Field from '../../components/Field/field';
 import { useLogin } from './useLogin';
 import FormError from '../../components/FormError/formError';
-import ReactNativeBiometrics, { BiometryTypes } from 'react-native-biometrics'
-import { AlertIOS } from 'react-native';
-import FingerprintScanner from 'react-native-fingerprint-scanner';
+import ModalPopup from '../../components/ModalPopup/modalPopup';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default function Login(props) {
 
     const { route, navigation } = props;
 
+
     const { formatMessage } = useIntl();
 
     const talonsProps = useLogin({ navigation });
-
-
-    const fingerprint = async () => {
-
-        // const rnBiometrics = new ReactNativeBiometrics({ allowDeviceCredentials: true })
-        // console.log('rnBiometrics', rnBiometrics);
-        // console.log('BiometryTypes', BiometryTypes);
-        // const { biometryType } = await rnBiometrics.isSensorAvailable()
-
-        // console.log('biometryType', biometryType);
-
-        // if (biometryType === BiometryTypes.Biometrics) {
-        //     //do something face id specific
-        // }
-
-        FingerprintScanner
-        .authenticate({ title: 'Log in with Biometrics' })
-        .then((res) => {
-            console.log('res',res);
-        });
-    }
-
-    const handleFacesDetected = (e) => {
-        console.log('handleFacesDetected', e);
-    }
-
-
 
     const {
         onChangeField,
         handleSubmit,
         errorList,
         errors,
-        loading
+        loading,
+        isBiometricSupported,
+        fingerprint,
+        bioSaved,
+        handleBiometricAuth,
+        showModal,
+        hanldeConfirm,
+        handleCancel,
     } = talonsProps;
 
     console.log('formErrors', errorList);
+
+    // Alert.alert('Alert',
+    //     'Are you sure delete all notifications',
+    //     [
+    //         {
+    //             text: 'OK',
+    //             onPress: () => {
+    //                 console.log('OK');
+    //             }
+    //         },
+    //         {
+    //             text: "Cancel",
+    //             onPress: () => {
+    //               console.log('Cancel');
+    //             },
+    //             style: "cancel"
+    //         },
+    //         {
+    //             text: "Not again",
+    //             onPress: () => {
+    //               console.log('Not again');
+    //             },
+    //             style: "Not again"
+    //         },
+    //     ],
+    //     {
+    //         cancelable: true,
+    //     })
 
     return (
         <View style={styles.container}>
@@ -94,19 +102,38 @@ export default function Login(props) {
                 </View>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={fingerprint} disabled={loading} style={styles.touchableHighlight}>
+            {/* <Text> {isBiometricSupported && fingerprint ? 'Your device is compatible with Biometrics'
+                : 'Face or Fingerprint scanner is available on this device'}
+            </Text> */}
+
+            {isBiometricSupported && fingerprint && bioSaved ? <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlight}>
                 <View style={styles.primaryButton}>
                     <Text style={styles.primaryButtonText}>
                         {formatMessage({
                             id: 'global.finger',
-                            defaultMessage: '指纹'
+                            defaultMessage: 'Login with Biometrics'
                         })}
                     </Text>
                 </View>
-            </TouchableHighlight>
+            </TouchableHighlight> : ''}
 
-
-        </View>
+            <ModalPopup
+                showModal={showModal}
+                hanldeConfirm={hanldeConfirm}
+                handleCancel={handleCancel}
+                confirmText={formatMessage({
+                    id: 'login.biometricsLoginSetting',
+                    defaultMessage: 'Biometrics Login Setting'
+                })}
+            >
+                <View>
+                    <Text style={styles.biometricsSettingTitle}><FormattedMessage id='login.biometricsSettingTitle' defaultMessage={'Try quick login'} /></Text>
+                </View>
+                <View style={styles.fingerprint}>
+                    <MaterialIcons name='fingerprint' size={26} />
+                </View>
+            </ModalPopup>
+        </View >
     )
 }
 
@@ -129,6 +156,15 @@ const styles = StyleSheet.create({
     },
     touchableHighlight: {
         borderRadius: 6,
-        marginBottom: 10
+        marginBottom: globalcss.indent_m
+    },
+    biometricsSettingTitle: {
+        marginBottom: globalcss.indent_m,
+        textAlign: 'center'
+    },
+    fingerprint: {
+        marginLeft: 'auto',
+        marginRight: 'auto',
+        marginBottom: globalcss.indent_m
     }
 })

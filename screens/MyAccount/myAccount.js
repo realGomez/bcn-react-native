@@ -18,7 +18,7 @@ export default function MyAccount(props) {
 
             <View style={styles.section}>
                 {isSignedIn ?
-                    <View>
+                    <View  style={styles.link}>
                         <Text>{userInfo.firstname}</Text>
 
                     </View>
@@ -38,9 +38,25 @@ export default function MyAccount(props) {
                         </View>
                     </TouchableHighlight>}
 
+                {isSignedIn ? <TouchableHighlight onPress={() => {
+                    navigation.navigate('BiometricsVerify', {
+
+                    })
+                }}>
+                    <View style={styles.link}>
+                        <Text style={styles.text}>
+                            <FormattedMessage
+                                id={'myAccount.biometricsVerify'}
+                                defaultMessage={'biometricsVerify'}
+                            />
+                        </Text>
+                        <AntDesign name="right" color={'#000000'} size={10} />
+                    </View>
+                </TouchableHighlight> : ''}
+
             </View>
 
-
+           
             <View style={styles.section}>
                 <TouchableHighlight onPress={() => {
                     navigation.navigate('StoreSwitcher', {
@@ -72,13 +88,14 @@ const styles = StyleSheet.create({
 
     },
     section: {
-        backgroundColor: '#FFFFFF',
-        borderRadius: 5,
-        paddingTop: globalcss.indent_m,
-        paddingLeft: globalcss.indent_s,
-        paddingRight: globalcss.indent_s,
-        paddingBottom: globalcss.indent_m,
+        // backgroundColor: '#FFFFFF',
+        // borderRadius: 5,
+        // paddingTop: globalcss.indent_m,
+        // paddingBottom: globalcss.indent_m,
+        // paddingLeft: globalcss.indent_s,
+        // paddingRight: globalcss.indent_s,
         marginBottom: globalcss.indent_s,
+        borderRadius: 5
 
     },
     link: {
@@ -87,7 +104,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         //  paddingLeft: globalcss.indent_m,
         // paddingRight: globalcss.indent_m,
-        // padding: globalcss.indent_s,
+        padding: globalcss.indent_s,
         // marginBottom: globalcss.indent_s,
     },
     text: {

@@ -7,6 +7,7 @@ import { setToken, setUserInfo } from '../../redux/reducers/user'
 import { setCartId, setCartInfo } from '../../redux/reducers/cart'
 import { useSelector, useDispatch } from 'react-redux'
 import { useAwaitQuery } from '../../hooks/useAwaitQuery';
+import * as LocalAuthentication from 'expo-local-authentication'
 
 import WxValidate from '../../utils/wxValidate';
 
@@ -24,6 +25,14 @@ export const useLogin = props => {
     const { formatMessage } = useIntl();
     const [formValues, setFormValues] = useState({});
     const [errorList, setErrorList] = useState([]);
+    const [isBiometricSupported, setIsBiometricSupported] = useState(false);
+    const [fingerprint, setFingerprint] = useState(false);
+    const [bioType, setBioType] = useState(false);
+    const [bioSaved, setBioSaved] = useState(false);
+    const [showModal, setShowModal] = useState(false)
+
+    // Check if hardware supports biometrics
+
 
     const [fetchUserDetails, { data: userData, error: userError, loading: userLoging }] = useLazyQuery(GET_CUSTOMER, {
         fetchPolicy: 'cache-and-network',
@@ -81,6 +90,78 @@ export const useLogin = props => {
 
 
 
+    useEffect(() => {
+        (async () => {
+            const compatible = await LocalAuthentication.hasHardwareAsync();
+            setIsBiometricSupported(compatible);
+
+            const enroll = await LocalAuthentication.isEnrolledAsync();
+            console.log('enroll', enroll);
+            if (enroll) {
+                setFingerprint(true);
+            }
+
+            const type = await LocalAuthentication.supportedAuthenticationTypesAsync();
+            console.log('type', type);
+            // if (type) {
+            //     setBioType(type)
+            // }
+
+            const bio_email = await getStoreItemAsync('bio_email');
+            const bio_pw = await getStoreItemAsync('bio_pw');
+            const bio_saved = await getStoreItemAsync('bio_saved');
+            const bio_not_allowed = await getStoreItemAsync('bio_not_allowed');
+
+            if (bio_saved) {
+                setBioSaved(true)
+            }
+
+            if (compatible && enroll && bio_email && bio_pw && bio_saved) {
+                const biometricAuth = await LocalAuthentication.authenticateAsync({
+                    promptMessage: formatMessage({ id: 'login.loginWithBiometrics', defaultMessage: 'Login with Biometrics' }),
+                    disableDeviceFallback: false,
+                    cancelLabel: formatMessage({ id: 'login.cancel', defaultMessage: 'Cancel' }),
+                });
+
+
+                if (biometricAuth.success) {
+                    console.log('biometricAuth success');
+                    bioLogin(bio_email, bio_pw)
+                }
+            }
+
+        })();
+    }, []);
+
+    const handleBiometricAuth = async () => {
+
+        try {
+
+            const bio_email = await getStoreItemAsync('bio_email');
+            const bio_pw = await getStoreItemAsync('bio_pw');
+            const bio_saved = await getStoreItemAsync('bio_saved');
+
+            if (bio_email && bio_pw && bio_saved) {
+                const biometricAuth = await LocalAuthentication.authenticateAsync({
+                    promptMessage: formatMessage({ id: 'login.loginWithBiometrics', defaultMessage: 'Login with Biometrics' }),
+                    disableDeviceFallback: false,
+                    cancelLabel: formatMessage({ id: 'login.fingerprintInvalid', defaultMessage: 'Fingerprint is invalid, please log in with password to re-verify.' }),
+                });
+
+                if (biometricAuth.success) {
+                    console.log('biometricAuth success');
+                    bioLogin(bio_email, bio_pw)
+                }
+            } else {
+                alert(formatMessage({ id: 'login.cancel', defaultMessage: 'Cancel' }))
+            }
+
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     const onChangeField = useCallback((name, value) => {
         console.log('name,value', name, value);
@@ -91,6 +172,36 @@ export const useLogin = props => {
         }))
     }, [setFormValues])
 
+
+    const bioLogin = useCallback(async (email, password) => {
+        const res = await signIn({
+            variables: {
+                email: email,
+                password: password
+            }
+        })
+
+        await saveStoreItemAsync('token', res.data.generateCustomerToken.token)
+        dispatch(setToken(res.data.generateCustomerToken.token))
+
+        await saveStoreItemAsync('bio_email', formValues.email)
+        await saveStoreItemAsync('bio_pw', formValues.password)
+
+
+        await fetchUserDetails();
+
+        const resCart = await createEmptyCart();
+        const sourceCartId = resCart.data.cartId;
+
+        await saveStoreItemAsync('cartId', sourceCartId)
+        const destinationCartId = await getStoreItemAsync('cartId');
+
+        dispatch(setCartId(sourceCartId))
+
+
+        await fetchCartDetails();
+
+    }, [initValidate, formValues, setToken])
 
 
     const handleSubmit = useCallback(async () => {
@@ -115,15 +226,13 @@ export const useLogin = props => {
                 }
             })
 
-
             await saveStoreItemAsync('token', res.data.generateCustomerToken.token)
-            // setToken(res.data.generateCustomerToken.token)
             dispatch(setToken(res.data.generateCustomerToken.token))
 
+            await saveStoreItemAsync('bio_email', formValues.email)
+            await saveStoreItemAsync('bio_pw', formValues.password)
+
             await fetchUserDetails();
-
-
-            console.log('token1', await getStoreItemAsync('token'));
 
             const resCart = await createEmptyCart();
             const sourceCartId = resCart.data.cartId;
@@ -139,10 +248,19 @@ export const useLogin = props => {
             console.log('sourceCartId', sourceCartId);
             console.log('destinationCartId', destinationCartId);
 
+            const bio_not_allowed = await getStoreItemAsync('bio_not_allowed');
 
-            navigation.navigate('Account', {
+            console.log('bio_not_allowed', bio_not_allowed);
 
-            });
+
+            if (bio_not_allowed) {
+                navigation.navigate('Account', {
+
+                });
+            } else {
+                setShowModal(true);
+            }
+
             // Merge the guest cart into the customer cart.
             // await mergeCarts({
             //     variables: {
@@ -160,6 +278,17 @@ export const useLogin = props => {
     }, [initValidate, formValues, setToken])
 
 
+    const hanldeConfirm = useCallback(() => {
+        setShowModal(false);
+        navigation.navigate('BiometricsVerify', {
+
+        });
+    }, [])
+
+    const handleCancel = useCallback(() => {
+        setShowModal(false);
+    }, [])
+
     const errors = useMemo(
         () =>
             new Map([
@@ -175,7 +304,14 @@ export const useLogin = props => {
         loading: signInLoading || createEmptyCartLoading || userLoging || cartLoading,
         onChangeField,
         handleSubmit,
-        errorList
+        errorList,
+        isBiometricSupported,
+        fingerprint,
+        bioSaved,
+        handleBiometricAuth,
+        showModal,
+        hanldeConfirm,
+        handleCancel,
     }
 
 }

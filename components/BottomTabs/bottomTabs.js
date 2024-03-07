@@ -29,7 +29,7 @@ import Category from '../../screens/Category';
 import ProductDetail from '../../screens/ProductDetail';
 import StoreSwitcher from '../../screens/StoreSwitcher/storeSwitcher';
 import Login from '../../screens/Login/login';
-
+import BiometricsVerify from '../../screens/BiometricsVerify';
 // const IconTabHome = () => {
 //   return <Image style={{ width: 30, height: 30 }} source={require('../../assets/images/tabs/home.svg')} />
 // }
@@ -261,6 +261,13 @@ function AccountStackTabs() {
 
         }}
         component={Login} />
+
+      <CategoryStack.Screen name="BiometricsVerify"
+        options={{
+          title: formatMessage({ id: 'tab.biometricsVerify', defaultMessage: 'Biometrics Verify' })
+
+        }}
+        component={BiometricsVerify} />
     </CategoryStack.Navigator>
   );
 }
