@@ -27,9 +27,11 @@ export const useLogin = props => {
     const [errorList, setErrorList] = useState([]);
     const [isBiometricSupported, setIsBiometricSupported] = useState(false);
     const [fingerprint, setFingerprint] = useState(false);
-    const [bioType, setBioType] = useState(false);
+    const [bioType, setBioType] = useState('');
     const [bioSaved, setBioSaved] = useState(false);
-    const [showModal, setShowModal] = useState(false)
+    const [showModal, setShowModal] = useState(false);
+    const [loginType, setLoginType] = useState('email');
+
 
     // Check if hardware supports biometrics
 
@@ -88,7 +90,7 @@ export const useLogin = props => {
         initValidate = new WxValidate(rules, messages)
     }, [])
 
-
+    console.log('BioType', bioType);
 
     useEffect(() => {
         (async () => {
@@ -103,22 +105,39 @@ export const useLogin = props => {
 
             const type = await LocalAuthentication.supportedAuthenticationTypesAsync();
             console.log('type', type);
-            // if (type) {
-            //     setBioType(type)
-            // }
+
+            let bioTypeStr = '';
+
+            if (type) {
+
+                if (type.includes(1) && type.includes(2)) {
+                    setBioType('FINGERPRINT_FACIAL_RECOGNITION');
+                    bioTypeStr = 'FINGERPRINT_FACIAL_RECOGNITION';
+                } else if (type.includes(1)) {
+                    setBioType('FINGERPRINT')
+                    bioTypeStr = 'FINGERPRINT';
+                } else if (type.includes(2)) {
+                    setBioType('FACIAL_RECOGNITION')
+                    bioTypeStr = 'FACIAL_RECOGNITION';
+                } if (type.includes(3)) {
+                    setBioType('IRIS') // 虹膜
+                    bioTypeStr = 'IRIS';
+                }
+            }
 
             const bio_email = await getStoreItemAsync('bio_email');
             const bio_pw = await getStoreItemAsync('bio_pw');
             const bio_saved = await getStoreItemAsync('bio_saved');
             const bio_not_allowed = await getStoreItemAsync('bio_not_allowed');
 
-            if (bio_saved) {
+            if (bio_saved && !bio_not_allowed) {
                 setBioSaved(true)
+                setLoginType('biometrics')
             }
 
-            if (compatible && enroll && bio_email && bio_pw && bio_saved) {
+            if (compatible && enroll && bio_email && bio_pw && bio_saved && !bio_not_allowed) {
                 const biometricAuth = await LocalAuthentication.authenticateAsync({
-                    promptMessage: formatMessage({ id: 'login.loginWithBiometrics', defaultMessage: 'Login with Biometrics' }),
+                    promptMessage: formatMessage({ id: `global.loginWith_${bioTypeStr}`, defaultMessage: 'Login with {bioTypeStr}' }),
                     disableDeviceFallback: false,
                     cancelLabel: formatMessage({ id: 'login.cancel', defaultMessage: 'Cancel' }),
                 });
@@ -143,7 +162,7 @@ export const useLogin = props => {
 
             if (bio_email && bio_pw && bio_saved) {
                 const biometricAuth = await LocalAuthentication.authenticateAsync({
-                    promptMessage: formatMessage({ id: 'login.loginWithBiometrics', defaultMessage: 'Login with Biometrics' }),
+                    promptMessage: formatMessage({ id: `global.loginWith_${bioType}`, defaultMessage: 'Login with {bioType}' }),
                     disableDeviceFallback: false,
                     cancelLabel: formatMessage({ id: 'login.fingerprintInvalid', defaultMessage: 'Fingerprint is invalid, please log in with password to re-verify.' }),
                 });
@@ -183,10 +202,6 @@ export const useLogin = props => {
 
         await saveStoreItemAsync('token', res.data.generateCustomerToken.token)
         dispatch(setToken(res.data.generateCustomerToken.token))
-
-        await saveStoreItemAsync('bio_email', formValues.email)
-        await saveStoreItemAsync('bio_pw', formValues.password)
-
 
         await fetchUserDetails();
 
@@ -289,6 +304,12 @@ export const useLogin = props => {
         setShowModal(false);
     }, [])
 
+    const handleLoginTypeSwitch = useCallback((type) => {
+        setLoginType(type);
+    }, [])
+
+
+
     const errors = useMemo(
         () =>
             new Map([
@@ -307,11 +328,14 @@ export const useLogin = props => {
         errorList,
         isBiometricSupported,
         fingerprint,
+        bioType,
         bioSaved,
         handleBiometricAuth,
         showModal,
         hanldeConfirm,
         handleCancel,
+        loginType,
+        handleLoginTypeSwitch
     }
 
 }

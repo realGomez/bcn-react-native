@@ -25,88 +25,125 @@ export default function Login(props) {
         loading,
         isBiometricSupported,
         fingerprint,
+        bioType,
         bioSaved,
         handleBiometricAuth,
         showModal,
         hanldeConfirm,
         handleCancel,
+        loginType,
+        handleLoginTypeSwitch
     } = talonsProps;
 
     console.log('formErrors', errorList);
 
-    // Alert.alert('Alert',
-    //     'Are you sure delete all notifications',
-    //     [
-    //         {
-    //             text: 'OK',
-    //             onPress: () => {
-    //                 console.log('OK');
-    //             }
-    //         },
-    //         {
-    //             text: "Cancel",
-    //             onPress: () => {
-    //               console.log('Cancel');
-    //             },
-    //             style: "cancel"
-    //         },
-    //         {
-    //             text: "Not again",
-    //             onPress: () => {
-    //               console.log('Not again');
-    //             },
-    //             style: "Not again"
-    //         },
-    //     ],
-    //     {
-    //         cancelable: true,
-    //     })
+    const emailLogin = (<View>
+        <Field
+            name='email'
+            label={formatMessage({ id: 'global.email', defaultMessage: 'Email' })}
+            placeholder={formatMessage({ id: 'global.enter', defaultMessage: 'Enter' })}
+            onChangeField={onChangeField}
+            formErrors={errorList}
+        />
+        <Field
+            name='password'
+            placeholder={formatMessage({ id: 'global.enter', defaultMessage: 'Enter' })}
+            label={formatMessage({ id: 'global.password', defaultMessage: 'Enter' })}
+            onChangeField={onChangeField}
+            formErrors={errorList}
 
-    return (
-        <View style={styles.container}>
-            {/* <Text>
-                <FormattedMessage
-                    id='global.login'
-                    defaultMessage={'Login'}
-                />
-            </Text> */}
+        />
 
+        <FormError errors={Array.from(errors.values())}
+        />
 
-            <Field
-                name='email'
-                label={formatMessage({ id: 'global.email', defaultMessage: 'Email' })}
-                placeholder={formatMessage({ id: 'global.enter', defaultMessage: 'Enter' })}
-                onChangeField={onChangeField}
-                formErrors={errorList}
-            />
-            <Field
-                name='password'
-                placeholder={formatMessage({ id: 'global.enter', defaultMessage: 'Enter' })}
-                label={formatMessage({ id: 'global.password', defaultMessage: 'Enter' })}
-                onChangeField={onChangeField}
-                formErrors={errorList}
+        <TouchableHighlight onPress={handleSubmit} disabled={loading} style={styles.touchableHighlight}>
+            <View style={styles.primaryButton}>
+                <Text style={styles.primaryButtonText}>
+                    {formatMessage({
+                        id: 'global.login',
+                        defaultMessage: 'Login'
+                    })}
+                </Text>
+            </View>
+        </TouchableHighlight>
 
-            />
-
-            <FormError errors={Array.from(errors.values())}
-            />
-
-            <TouchableHighlight onPress={handleSubmit} disabled={loading} style={styles.touchableHighlight}>
-                <View style={styles.primaryButton}>
-                    <Text style={styles.primaryButtonText}>
+        <View style={styles.toolbar}>
+            <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlightSecondary}>
+                <View style={styles.thirdButton}>
+                    <Text style={styles.thirdButtonText}>
                         {formatMessage({
-                            id: 'global.login',
-                            defaultMessage: 'Login'
+                            id: 'global.signUp',
+                            defaultMessage: 'Sign Up'
                         })}
                     </Text>
                 </View>
             </TouchableHighlight>
 
+            <View style={styles.lineSplit}></View>
+
+            <TouchableHighlight onPress={() => { handleLoginTypeSwitch('biometric') }} disabled={loading} style={styles.touchableHighlightSecondary}>
+                <View style={styles.thirdButton}>
+                    <Text style={styles.thirdButtonText}>
+                        {formatMessage({
+                            id: `global.loginWith_${bioType}`,
+                            defaultMessage: '{bioType}'
+                        })}
+                    </Text>
+                </View>
+            </TouchableHighlight>
+        </View>
+    </View>)
+
+    const bioLogin = (
+        <View>
+            <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.fingerprint}>
+                <View style={styles.fingerprintButton}>
+                    <MaterialIcons name='fingerprint' size={26} color={'#245798'} />
+                </View>
+            </TouchableHighlight>
+            <View>
+                <Text style={styles.biometricsSettingTitle}><FormattedMessage id='global.clickToVerify_${bioType}' defaultMessage={'{bioType}'} /></Text>
+            </View>
+            <View style={styles.toolbar}>
+                <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlightSecondary}>
+                    <View style={styles.thirdButton}>
+                        <Text style={styles.thirdButtonText}>
+                            {formatMessage({
+                                id: 'global.signUp',
+                                defaultMessage: 'Sign Up'
+                            })}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+
+                <View style={styles.lineSplit}></View>
+
+                <TouchableHighlight onPress={() => { handleLoginTypeSwitch('email') }} disabled={loading} style={styles.touchableHighlightSecondary}>
+                    <View style={styles.thirdButton}>
+                        <Text style={styles.thirdButtonText}>
+                            {formatMessage({
+                                id: 'global.emailLogin',
+                                defaultMessage: 'Login with Email'
+                            })}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            </View>
+        </View>
+    )
+
+    return (
+        <View style={styles.container}>
+
+            {loginType == 'email' ? emailLogin : bioLogin}
+
+
             {/* <Text> {isBiometricSupported && fingerprint ? 'Your device is compatible with Biometrics'
                 : 'Face or Fingerprint scanner is available on this device'}
             </Text> */}
 
-            {isBiometricSupported && fingerprint && bioSaved ? <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlight}>
+            {/* {isBiometricSupported && fingerprint && bioSaved ? <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlight}>
                 <View style={styles.primaryButton}>
                     <Text style={styles.primaryButtonText}>
                         {formatMessage({
@@ -115,10 +152,12 @@ export default function Login(props) {
                         })}
                     </Text>
                 </View>
-            </TouchableHighlight> : ''}
+            </TouchableHighlight> : ''} */}
 
             <ModalPopup
                 showModal={showModal}
+                // showModal={true}
+
                 hanldeConfirm={hanldeConfirm}
                 handleCancel={handleCancel}
                 confirmText={formatMessage({
@@ -166,5 +205,32 @@ const styles = StyleSheet.create({
         marginLeft: 'auto',
         marginRight: 'auto',
         marginBottom: globalcss.indent_m
+    },
+    fingerprintButton: {
+        borderWidth: 1,
+        borderColor: '#245798',
+        padding: 4,
+        backgroundColor: '#ffffff'
+    },
+    toolbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        // backgroundColor: '#245798'
+    },
+    thirdButton: {
+        backgroundColor: '#ffffff',
+    },
+    thirdButtonText: {
+        textAlign: 'center',
+        color: '#245798'
+
+    },
+    touchableHighlightSecondary: {
+        //   flexGrow:1,
+        width: '50%'
+    },
+    lineSplit: {
+        width: 1,
+        backgroundColor: '#245798'
     }
 })

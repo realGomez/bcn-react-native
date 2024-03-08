@@ -16,7 +16,7 @@ const ModalPopup = props => {
         handleCancel,
         children,
         confirmText = formatMessage({ id: 'modal.confirm', defaultMessage: 'Confirm' }),
-        cancelText= formatMessage({ id: 'modal.cancel', defaultMessage: 'Cancel' }),
+        cancelText = formatMessage({ id: 'modal.cancel', defaultMessage: 'Cancel' }),
     } = props;
 
 
@@ -25,13 +25,13 @@ const ModalPopup = props => {
         animationType={'slide'}
         visible={showModal}
         transparent={true}
-        onRequestClose={() => {console.log('onRequestClose'); }}>
+        onRequestClose={() => { console.log('onRequestClose'); }}>
         <View style={styles.overlay}>
             <View style={styles.container}>
                 <View style={styles.content}>
                     <View>{children}</View>
                     <View>
-                        <TouchableHighlight onPress={hanldeConfirm}>
+                        <TouchableHighlight onPress={hanldeConfirm} style={styles.touchableHighlight}>
                             <View style={styles.primaryButton}>
                                 <Text style={styles.primaryButtonText}>
                                     {confirmText}
@@ -41,7 +41,7 @@ const ModalPopup = props => {
                     </View>
 
                     <View>
-                        <TouchableHighlight onPress={handleCancel}>
+                        <TouchableHighlight onPress={handleCancel} style={styles.touchableHighlight}>
                             <View style={styles.secondaryButton}>
                                 <Text style={styles.secondaryButtonText}>
                                     {cancelText}
@@ -97,15 +97,17 @@ const styles = StyleSheet.create({
     },
     touchableHighlight: {
         borderRadius: 6,
-        marginBottom: globalcss.indent_m
+        // marginBottom: globalcss.indent_m
     },
     toolbar: {
         marginTop: globalcss.indent_m,
         marginLeft: 'auto',
         marginRight: 'auto',
     },
-    secondaryButton:{
+    secondaryButton: {
         ...globalcss.secondaryButton,
+        backgroundColor: '#ffffff'
+
     },
     secondaryButtonText: {
         ...globalcss.secondaryButtonText
