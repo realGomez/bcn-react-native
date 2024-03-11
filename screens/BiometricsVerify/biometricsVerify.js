@@ -1,4 +1,5 @@
 import React, { Fragment, useState, useEffect, useCallback } from 'react';
+import { Alert } from 'react-native';
 import { number, string, shape } from 'prop-types';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { View, Button, Text, Image, StyleSheet, Modal, TouchableHighlight } from 'react-native';
@@ -37,6 +38,25 @@ const BiometricsVerify = props => {
             const type = await LocalAuthentication.supportedAuthenticationTypesAsync();
             console.log('type', type);
 
+            let bioTypeStr = '';
+
+            if (type) {
+
+                if (type.includes(1) && type.includes(2)) {
+                    setBioType('FINGERPRINT_FACIAL_RECOGNITION');
+                    bioTypeStr = 'FINGERPRINT_FACIAL_RECOGNITION';
+                } else if (type.includes(1)) {
+                    setBioType('FINGERPRINT')
+                    bioTypeStr = 'FINGERPRINT';
+                } else if (type.includes(2)) {
+                    setBioType('FACIAL_RECOGNITION')
+                    bioTypeStr = 'FACIAL_RECOGNITION';
+                } if (type.includes(3)) {
+                    setBioType('IRIS') // 虹膜
+                    bioTypeStr = 'IRIS';
+                }
+            }
+
             const bio_email = await getStoreItemAsync('bio_email');
             const bio_pw = await getStoreItemAsync('bio_pw');
             const bio_saved = await getStoreItemAsync('bio_saved');
@@ -58,23 +78,53 @@ const BiometricsVerify = props => {
 
         if (bio_email && bio_pw && !bio_saved) {
             const biometricAuth = await LocalAuthentication.authenticateAsync({
-                promptMessage: formatMessage({ id: 'login.loginWithBiometrics', defaultMessage: 'Login with Biometrics' }),
+                promptMessage: formatMessage({ id: `global.loginWith_${bioType}`, defaultMessage: 'Login with {bioTypeStr}' }),
                 disableDeviceFallback: false,
-                cancelLabel: formatMessage({ id: 'login.fingerprintInvalid', defaultMessage: 'Fingerprint is invalid, please log in with password to re-verify.' }),
+                cancelLabel: formatMessage({ id: 'global.cancel', defaultMessage: 'Cancel' }),
             });
 
             if (biometricAuth.success) {
                 console.log('biometricAuth success');
                 await saveStoreItemAsync('bio_saved', '1')
                 setBiometricsEnable(true)
+            } else {
+                Alert.alert('',
+                    formatMessage({ id: `global.invalid_${bioType}`, defaultMessage: 'Invalid {bioType}' }),
+                    [
+                        {
+                            text: formatMessage({ id: `global.confirm`, defaultMessage: 'OK' }),
+                            // onPress: () => {
+                            // }
+                        },
+
+                    ],
+                    {
+                        cancelable: false,
+                    }
+                );
+                await saveStoreItemAsync('bio_saved', '')
+                setBiometricsEnable(false)
             }
+
         } else {
-            // await saveStoreItemAsync('bio_email', '')
-            // await saveStoreItemAsync('bio_pw', '')
+            Alert.alert('',
+                formatMessage({ id: `global.invalid_${bioType}`, defaultMessage: 'Invalid {bioType}' }),
+                [
+                    {
+                        text: formatMessage({ id: `global.confirm`, defaultMessage: 'OK' }),
+                        // onPress: () => {
+                        // }
+                    },
+
+                ],
+                {
+                    cancelable: false,
+                }
+            );
             await saveStoreItemAsync('bio_saved', '')
             setBiometricsEnable(false)
         }
-    }, [])
+    }, [bioType])
 
 
     return (

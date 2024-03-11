@@ -6,34 +6,31 @@ import { useSelector, useDispatch } from 'react-redux'
 
 export const useAddressBook = props => {
 
-    const { navigation } = props
+    const {
+        navigation,
+        shouldRefetch
+    } = props
 
 
     const { shippingAddress } = useSelector((state) => state.checkout)
     const dispatch = useDispatch()
 
-    const { data, error, loading } = useQuery(GET_CUSTOMER_QUERY, {
+    const { data, error, loading, refetch } = useQuery(GET_CUSTOMER_QUERY, {
         fetchPolicy: 'cache-and-network',
         nextFetchPolicy: 'cache-first',
     });
 
+    useEffect(() => {
+
+        if (shouldRefetch) {
+            refetch()
+        }
+    }, [refetch, shouldRefetch])
 
     const addresses = useMemo(() => {
         return data && data.customer ? data.customer.addresses : []
     }, [data])
 
-
-    useEffect(() => {
-
-        const defaultAddress = addresses.find(address => {
-            return address.default_shipping
-        })
-
-        if (defaultAddress) {
-            dispatch(setShippingAddress(defaultAddress))
-        }
-
-    }, [addresses])
 
 
     const handleEditAddress = useCallback((address) => {
@@ -44,10 +41,18 @@ export const useAddressBook = props => {
         })
     }, [dispatch, setEditAddress, navigation])
 
+    const handleSelectShippingAddress = useCallback((address) => {
+
+        dispatch(setShippingAddress(address))
+        // navigation.navigate('EditAddress', {
+        // })
+    }, [dispatch, setShippingAddress, navigation])
+
     return {
         addresses,
         shippingAddress,
-        handleEditAddress
+        handleEditAddress,
+        handleSelectShippingAddress
     }
 
 }

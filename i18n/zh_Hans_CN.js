@@ -30,6 +30,7 @@ export default {
     'checkout.pay': '支付',
     'tab.addressBook': '地址',
     'checkout.shippingAddress': '送货地址',
+    'checkout.shippingMethod':'送货方式',
     'tab.editAddress': '编辑地址',
     'global.firstname': '名字',
     'global.telephone': '电话',
@@ -42,7 +43,13 @@ export default {
     'global.addNewAddress"': '新增地址',
     'global.finger': '指纹登入',
     'login.loginWithBiometrics': '指纹/扫脸登入',
-    'login.cancel': '取消',
+    'global.cancel': '取消',
+    'global.confirm': '确认',
+    'global.invalid_': '',
+    'global.invalid_FINGERPRINT_FACIAL_RECOGNITION': '指纹/扫脸失效，请用密码登入重新验证',
+    'global.invalid_FINGERPRINT': '指纹失效，请用密码登入重新验证',
+    'global.invalid_FACIAL_RECOGNITION': '扫脸失效，请用密码登入重新验证',
+    'global.invalid_FACIAL_虹膜识别': '虹膜识别失效，请用密码登入重新验证',
     'login.fingerprintInvalid': '指纹失效，请用密码登入重新验证',
     'modal.confirm': '确认',
     'modal.cancel': '取消',
@@ -54,7 +61,7 @@ export default {
     'global.signUp': '注册',
     'global.emailLogin': '电邮登录',
     'global.clickToVerify_': '点击进行登录',
-    'global.clickToVerify_FINGERPRINT_FACIAL_RECOGNITION': '点击进行登录',
+    'global.clickToVerify_FINGERPRINT_FACIAL_RECOGNITION': '点击进行指纹/扫脸登录',
     'global.clickToVerify_FINGERPRINT': '点击进行指纹登录',
     'global.clickToVerify_FACIAL_RECOGNITION': '点击进行扫脸登录',
     'global.clickToVerify_IRIS': '点击进行虹膜识别登录',
@@ -63,5 +70,5 @@ export default {
     'global.loginWith_FINGERPRINT': '指纹登入',
     'global.loginWith_FACIAL_RECOGNITION': '扫脸登入',
     'global.loginWith_IRIS': '虹膜识别登入',
-
+    'global.addNewAddress':'新增地址'
 }

@@ -8,6 +8,7 @@ import { useIntl } from 'react-intl';
 
 export const useEditAddress = props => {
 
+    const { navigation } = props;
 
     const { editAddress } = useSelector((state) => state.checkout)
     const dispatch = useDispatch()
@@ -113,13 +114,14 @@ export const useEditAddress = props => {
 
 
         if (editAddress) {
-            updateAddress({
+            await updateAddress({
                 variables: {
                     addressId: editAddress.id,
                     address: {
                         region: {
                             region: formValues.region,
-                            region_code: formValues.region_code
+                            region_code: formValues.region_code,
+                            region_id: formValues.region_id
                         },
                         country_code: formValues.country_code,
                         street: [formValues.street],
@@ -127,38 +129,51 @@ export const useEditAddress = props => {
                         postcode: '000000',
                         city: formValues.city,
                         firstname: formValues.firstname,
-                        lastname: '*',
+                        lastname: 'Bak',
                         default_shipping: editAddress.default_shipping,
                         default_billing: editAddress.default_billing
 
                     }
                 }
             })
+
+            navigation.navigate('AddressBook', {
+                shouldRefetch:true
+            })
         } else {
-            createAddress({
+            await createAddress({
                 variables: {
                     address: {
                         region: {
                             region: formValues.region,
-                            region_code: formValues.region_code
+                            region_code: formValues.region_code,
+                            region_id: formValues.region_id
                         },
-                        country_code: formValues.country,
+                        country_code: formValues.country_code,
                         street: [formValues.street],
                         telephone: formValues.telephone,
                         postcode: '000000',
                         city: formValues.city,
                         firstname: formValues.firstname,
-                        lastname: '*',
-                        default_shipping: true,
+                        lastname: 'Bak',
+                        default_shipping: false,
                         default_billing: false
 
                     }
                 }
             })
+
+            navigation.navigate('AddressBook', {
+                shouldRefetch:true
+            })
         }
 
 
-    }, [formValues, editAddress])
+    }, [
+        formValues,
+        editAddress,
+        navigation
+    ])
 
     const errors = useMemo(
         () =>

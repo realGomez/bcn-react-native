@@ -31,6 +31,8 @@ export default function Country(props) {
     })
 
 
+    // console.log('availableRegions',availableRegions);
+
     const regions = availableRegions.map((item) => {
         return <Picker.Item label={item.name} value={item.code} key={item.code} style={styles.item} />
     })

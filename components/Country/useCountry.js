@@ -40,35 +40,51 @@ export const useCountry = props => {
 
 
     useEffect(() => {
-
-        if (editAddress) {
+        if (editAddress && countries.length) {
             setCountry(editAddress.country_code)
         }
 
-    }, [editAddress])
+    }, [editAddress, countries])
 
     useEffect(() => {
 
-        if (editAddress) {
-            setRegion(editAddress.region.region_code)
+        if (editAddress && availableRegions.length) {
+            const match = availableRegions.find(item => {
+                return item.code == editAddress.region.region_code
+            })
+
+            if (match) {
+                onChangeField('region', match.name);
+                onChangeField('region_code', match.code);
+                onChangeField('region_id', match.id);
+                setRegion(match.code)
+
+            }
         }
 
     }, [setRegion, availableRegions, editAddress])
 
     const handleCountryChange = useCallback((value) => {
         setCountry(value)
-    }, [setCountry])
+
+    }, [setCountry, countries])
 
     const handleRegionChange = useCallback((value) => {
 
-        setRegion(value)
 
         const match = availableRegions.find(item => {
             return item.code == value
         })
 
-        onChangeField('region', match.name);
-        onChangeField('region_code', value);
+        console.log('match', match);
+
+        if (match) {
+            onChangeField('region', match.name);
+            onChangeField('region_code', match.code);
+            onChangeField('region_id', match.id);
+            setRegion(match.code)
+        }
+
 
     }, [
         setRegion,
@@ -77,7 +93,9 @@ export const useCountry = props => {
     ])
 
 
-    console.log('region region', region);
+    console.log('editAddress', editAddress);
+    // console.log('region region', region);
+
     console.log(' country', country);
 
 

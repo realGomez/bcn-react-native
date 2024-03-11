@@ -3,6 +3,8 @@ import { View, Button, Text, StyleSheet, Image, ScrollView, Pressable, Touchable
 import globalcss from '../../globalcss';
 import { useCheckout } from './useCheckout';
 import Item from '../../components/Checkout/Item/item';
+import Shipping from '../../components/Checkout/Shipping/shipping';
+
 import PriceSummary from '../../components/Cart/PriceSummary/priceSummary';
 import { FormattedMessage } from 'react-intl';
 import { useSelector, useDispatch } from 'react-redux'
@@ -59,38 +61,7 @@ export default function Checkout(props) {
                 </View>
 
                 <View style={styles.section}>
-                    {shippingAddress ? <View>
-                        <TouchableHighlight onPress={() => {
-                            navigation.navigate('AddressBook', {
-
-                            })
-                        }}>
-                            <View style={styles.link}>
-                                <View style={styles.text}>
-                                    <Text>{shippingAddress.firstname}, {shippingAddress.telephone},</Text>
-                                    <Text>{shippingAddress.street[0]} {shippingAddress.city} {shippingAddress.region.region} {shippingAddress.country_code}</Text>
-                                </View>
-
-                                <AntDesign name="right" color={'#000000'} size={16} />
-                            </View>
-                        </TouchableHighlight>
-                    </View> : <View>
-                        <TouchableHighlight onPress={() => {
-                            navigation.navigate('AddressBook', {
-
-                            })
-                        }}>
-                            <View style={styles.link}>
-                                <Text style={styles.text}>
-                                    <FormattedMessage
-                                        id={'checkout.shippingAddress'}
-                                        defaultMessage={'Shipping address'}
-                                    />
-                                </Text>
-                                <AntDesign name="right" color={'#000000'} size={16} />
-                            </View>
-                        </TouchableHighlight>
-                    </View>}
+                    <Shipping navigation={navigation}/>
                 </View>
 
                 {itemsHtml}

@@ -21,7 +21,7 @@ export default function EditAddress(props) {
         errors,
         handleSubmit,
         loading
-    } = useEditAddress({})
+    } = useEditAddress({navigation})
 
     const { formatMessage } = useIntl();
 

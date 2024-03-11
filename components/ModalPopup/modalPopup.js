@@ -51,7 +51,9 @@ const ModalPopup = props => {
                     </View>
                 </View>
                 <View style={styles.toolbar}>
-                    <AntDesign name='closecircleo' size={26} color={'#ffffff'} />
+                    <TouchableHighlight onPress={handleCancel} style={styles.touchableHighlight}>
+                        <AntDesign name='closecircleo' size={26} color={'#ffffff'} />
+                    </TouchableHighlight>
                 </View>
             </View>
         </View>

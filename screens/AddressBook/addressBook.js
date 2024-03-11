@@ -11,26 +11,40 @@ export default function Cart(props) {
 
     const { route, navigation } = props;
 
+    const { shouldRefetch } = route.params;
+
     const { formatMessage } = useIntl();
 
     const {
         addresses,
         shippingAddress,
-        handleEditAddress
-    } = useAddressBook({ navigation })
+        handleEditAddress,
+        handleSelectShippingAddress
+    } = useAddressBook({
+        navigation,
+        shouldRefetch
+    })
 
 
     const addressHtml = addresses.map((address) => {
         return <View key={address.id} style={styles.item}>
-            <View style={styles.edit}>
-                {shippingAddress && shippingAddress.id == address.id ? <Fontisto name="checkbox-active" size={16} /> : <Fontisto name="checkbox-passive" size={16} />}
-            </View>
-            <View style={styles.text}>
-                <Text>{address.firstname}, {address.telephone},</Text>
-                <Text>{address.street[0]} {address.city} {address.region.region} {address.country_code}</Text>
-            </View>
+            <TouchableHighlight style={styles.selectButton} onPress={() => { handleSelectShippingAddress(address) }}>
+                <View style={styles.selectArea}>
+                    <View style={styles.edit}>
+                        {shippingAddress && shippingAddress.id == address.id ? <Fontisto name="checkbox-active" size={16} /> : <Fontisto name="checkbox-passive" size={16} />}
+                    </View>
+                    <View style={styles.text}>
+                        <Text>{address.firstname}, {address.telephone},</Text>
+                        <Text>{address.street[0]} {address.city} {address.region.region} {address.country_code}</Text>
+                    </View>
+                </View>
+            </TouchableHighlight>
+
             <TouchableHighlight style={styles.edit} onPress={() => { handleEditAddress(address) }}>
-                <AntDesign name="edit" size={16} />
+                <View style={styles.editIcon}>
+                    <AntDesign name="edit" size={16} />
+                </View>
+
             </TouchableHighlight>
 
         </View>
@@ -40,7 +54,7 @@ export default function Cart(props) {
         <View style={styles.container}>
             <ScrollView>
                 {addressHtml}
-                <TouchableHighlight onPress={handleEditAddress(null)}  style={styles.touchableHighlight}>
+                <TouchableHighlight onPress={() => { handleEditAddress(null) }} style={styles.touchableHighlight}>
                     <View style={styles.primaryButton}>
                         <Text style={styles.primaryButtonText}>
                             {formatMessage({
@@ -69,8 +83,20 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center'
     },
+    selectButton: {
+        flexGrow: 1,
+    },
+    selectArea: {
+        backgroundColor: '#ffffff',
+        flexDirection: 'row',
+    },
     edit: {
-        width: 24
+        width: 24,
+
+
+    },
+    editIcon: {
+        backgroundColor: '#ffffff'
     },
     text: {
         flexGrow: 1

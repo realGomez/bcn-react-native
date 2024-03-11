@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, Pressable, TextInput, TouchableHighlight, Alert, Modal } from 'react-native';
 import globalcss from '../../globalcss';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -32,12 +32,18 @@ export default function Login(props) {
         hanldeConfirm,
         handleCancel,
         loginType,
-        handleLoginTypeSwitch
+        handleLoginTypeSwitch,
+        loginComplete,
+        bioAccount
     } = talonsProps;
 
     console.log('formErrors', errorList);
 
-    const emailLogin = (<View>
+    const emailLogin = (loginComplete ? <View>
+        <View>
+            <Text style={styles.biometricsSettingTitle}>{bioAccount}</Text>
+        </View>
+    </View> : <View>
         <Field
             name='email'
             label={formatMessage({ id: 'global.email', defaultMessage: 'Email' })}
@@ -79,19 +85,21 @@ export default function Login(props) {
                     </Text>
                 </View>
             </TouchableHighlight>
+            {bioSaved ? <Fragment>
+                <View style={styles.lineSplit}></View>
+                <TouchableHighlight onPress={() => { handleLoginTypeSwitch('biometric') }} disabled={loading} style={styles.touchableHighlightSecondary}>
+                    <View style={styles.thirdButton}>
+                        <Text style={styles.thirdButtonText}>
+                            {formatMessage({
+                                id: `global.loginWith_${bioType}`,
+                                defaultMessage: '{bioType}'
+                            })}
+                        </Text>
+                    </View>
+                </TouchableHighlight>
+            </Fragment> : ''}
 
-            <View style={styles.lineSplit}></View>
 
-            <TouchableHighlight onPress={() => { handleLoginTypeSwitch('biometric') }} disabled={loading} style={styles.touchableHighlightSecondary}>
-                <View style={styles.thirdButton}>
-                    <Text style={styles.thirdButtonText}>
-                        {formatMessage({
-                            id: `global.loginWith_${bioType}`,
-                            defaultMessage: '{bioType}'
-                        })}
-                    </Text>
-                </View>
-            </TouchableHighlight>
         </View>
     </View>)
 
@@ -103,7 +111,7 @@ export default function Login(props) {
                 </View>
             </TouchableHighlight>
             <View>
-                <Text style={styles.biometricsSettingTitle}><FormattedMessage id='global.clickToVerify_${bioType}' defaultMessage={'{bioType}'} /></Text>
+                <Text style={styles.biometricsSettingTitle}><FormattedMessage id={`global.clickToVerify_${bioType}`} defaultMessage={'{bioType}'} /></Text>
             </View>
             <View style={styles.toolbar}>
                 <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlightSecondary}>
@@ -165,6 +173,8 @@ export default function Login(props) {
                     defaultMessage: 'Biometrics Login Setting'
                 })}
             >
+
+
                 <View>
                     <Text style={styles.biometricsSettingTitle}><FormattedMessage id='login.biometricsSettingTitle' defaultMessage={'Try quick login'} /></Text>
                 </View>

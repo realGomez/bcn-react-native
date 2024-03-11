@@ -1,6 +1,7 @@
 import { useLazyQuery, useQuery, useMutation } from '@apollo/client';
 import { SIGN_IN, GET_CUSTOMER, CREATE_CART, MERGE_CARTS, GET_CART_DETAILS_QUERY } from './login.gql';
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { saveStoreItemAsync, getStoreItemAsync } from '../../utils/secureStore';
 import { setToken, setUserInfo } from '../../redux/reducers/user'
@@ -31,10 +32,11 @@ export const useLogin = props => {
     const [bioSaved, setBioSaved] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [loginType, setLoginType] = useState('email');
-
+    const [loginComplete, setLoginComplete] = useState(false);
+    const [enableReditect, setEnableReditect] = useState(false);
+    const [bioAccount, setBioAccount] = useState('');
 
     // Check if hardware supports biometrics
-
 
     const [fetchUserDetails, { data: userData, error: userError, loading: userLoging }] = useLazyQuery(GET_CUSTOMER, {
         fetchPolicy: 'cache-and-network',
@@ -130,16 +132,19 @@ export const useLogin = props => {
             const bio_saved = await getStoreItemAsync('bio_saved');
             const bio_not_allowed = await getStoreItemAsync('bio_not_allowed');
 
-            if (bio_saved && !bio_not_allowed) {
+            console.log('bio_not_allowed', bio_not_allowed);
+
+            if (compatible && enroll && bio_email && bio_pw && bio_saved && !bio_not_allowed) {
                 setBioSaved(true)
                 setLoginType('biometrics')
+                setBioAccount(bio_email);
             }
 
             if (compatible && enroll && bio_email && bio_pw && bio_saved && !bio_not_allowed) {
                 const biometricAuth = await LocalAuthentication.authenticateAsync({
                     promptMessage: formatMessage({ id: `global.loginWith_${bioTypeStr}`, defaultMessage: 'Login with {bioTypeStr}' }),
                     disableDeviceFallback: false,
-                    cancelLabel: formatMessage({ id: 'login.cancel', defaultMessage: 'Cancel' }),
+                    cancelLabel: formatMessage({ id: 'global.cancel', defaultMessage: 'Cancel' }),
                 });
 
 
@@ -151,6 +156,18 @@ export const useLogin = props => {
 
         })();
     }, []);
+
+
+    useEffect(() => {
+
+        if (enableReditect && loginComplete) {
+            navigation.navigate('Account', {
+
+            });
+
+        }
+
+    }, [navigation, enableReditect, loginComplete])
 
     const handleBiometricAuth = async () => {
 
@@ -164,15 +181,55 @@ export const useLogin = props => {
                 const biometricAuth = await LocalAuthentication.authenticateAsync({
                     promptMessage: formatMessage({ id: `global.loginWith_${bioType}`, defaultMessage: 'Login with {bioType}' }),
                     disableDeviceFallback: false,
-                    cancelLabel: formatMessage({ id: 'login.fingerprintInvalid', defaultMessage: 'Fingerprint is invalid, please log in with password to re-verify.' }),
+                    cancelLabel: formatMessage({ id: `global.cancel`, defaultMessage: 'Cancel' }),
                 });
 
                 if (biometricAuth.success) {
                     console.log('biometricAuth success');
                     bioLogin(bio_email, bio_pw)
+                } else {
+                    await saveStoreItemAsync('bio_saved', '')
+
+                    Alert.alert('warning',
+                        formatMessage({ id: `global.invalid_${bioType}`, defaultMessage: 'Invalid {bioType}' }),
+                        [
+                            {
+                                text: formatMessage({ id: `global.confirm`, defaultMessage: 'OK' }),
+                                onPress: () => {
+                                    setLoginType('email')
+                                }
+                            },
+                            // {
+                            //     text: formatMessage({ id: `global.cancel`, defaultMessage: 'Cancel' }),
+                            //     // onPress: () => console.log("Cancel Pressed"),
+                            //     style: "cancel"
+                            // },
+                        ],
+                        {
+                            cancelable: false,
+                        }
+                    );
                 }
             } else {
-                alert(formatMessage({ id: 'login.cancel', defaultMessage: 'Cancel' }))
+                Alert.alert('',
+                    formatMessage({ id: `global.invalid_${bioType}`, defaultMessage: 'Invalid {bioType}' }),
+                    [
+                        {
+                            text: formatMessage({ id: `global.confirm`, defaultMessage: 'OK' }),
+                            onPress: () => {
+                                setLoginType('email')
+                            }
+                        },
+                        // {
+                        //     text: formatMessage({ id: `global.cancel`, defaultMessage: 'Cancel' }),
+                        //     // onPress: () => console.log("Cancel Pressed"),
+                        //     style: "cancel"
+                        // },
+                    ],
+                    {
+                        cancelable: false,
+                    }
+                );
             }
 
 
@@ -215,6 +272,10 @@ export const useLogin = props => {
 
 
         await fetchCartDetails();
+
+        navigation.navigate('Account', {
+
+        });
 
     }, [initValidate, formValues, setToken])
 
@@ -267,7 +328,8 @@ export const useLogin = props => {
 
             console.log('bio_not_allowed', bio_not_allowed);
 
-
+            setBioAccount(formValues.email);
+            setLoginComplete(true)
             if (bio_not_allowed) {
                 navigation.navigate('Account', {
 
@@ -294,14 +356,17 @@ export const useLogin = props => {
 
 
     const hanldeConfirm = useCallback(() => {
-        setShowModal(false);
+        setShowModal(true);
+        setEnableReditect(false)
         navigation.navigate('BiometricsVerify', {
 
         });
     }, [])
 
     const handleCancel = useCallback(() => {
+        setEnableReditect(true)
         setShowModal(false);
+
     }, [])
 
     const handleLoginTypeSwitch = useCallback((type) => {
@@ -335,7 +400,9 @@ export const useLogin = props => {
         hanldeConfirm,
         handleCancel,
         loginType,
-        handleLoginTypeSwitch
+        handleLoginTypeSwitch,
+        loginComplete,
+        bioAccount
     }
 
 }

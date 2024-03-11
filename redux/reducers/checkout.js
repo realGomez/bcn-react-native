@@ -7,12 +7,21 @@ export const checkoutSlice = createSlice({
         editAddress: null,
 
     },
+    stepCodes: ['shipping', 'payment'],
+    validStep: '',
+    submitStep: '',
     reducers: {
         setShippingAddress: (state, action) => {
             state.shippingAddress = action.payload
         },
         setEditAddress: (state, action) => {
             state.editAddress = action.payload
+        },
+        setValidStep: (state, action) => {
+            state.validStep = action.payload
+        },
+        setSubmitStep: (state, action) => {
+            state.submitStep = action.payload
         },
 
     },
