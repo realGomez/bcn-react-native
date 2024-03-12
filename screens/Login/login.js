@@ -105,6 +105,9 @@ export default function Login(props) {
 
     const bioLogin = (
         <View>
+            <View>
+                <Text style={styles.biometricsSettingTitle}>{bioAccount}</Text>
+            </View>
             <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.fingerprint}>
                 <View style={styles.fingerprintButton}>
                     <MaterialIcons name='fingerprint' size={26} color={'#245798'} />
@@ -113,6 +116,10 @@ export default function Login(props) {
             <View>
                 <Text style={styles.biometricsSettingTitle}><FormattedMessage id={`global.clickToVerify_${bioType}`} defaultMessage={'{bioType}'} /></Text>
             </View>
+
+            <FormError errors={Array.from(errors.values())}
+            />
+
             <View style={styles.toolbar}>
                 <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlightSecondary}>
                     <View style={styles.thirdButton}>
@@ -169,7 +176,7 @@ export default function Login(props) {
                 hanldeConfirm={hanldeConfirm}
                 handleCancel={handleCancel}
                 confirmText={formatMessage({
-                    id: 'login.biometricsLoginSetting',
+                    id: `login.loginSetting_${bioType}`,
                     defaultMessage: 'Biometrics Login Setting'
                 })}
             >

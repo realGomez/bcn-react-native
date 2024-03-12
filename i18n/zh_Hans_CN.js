@@ -30,7 +30,7 @@ export default {
     'checkout.pay': '支付',
     'tab.addressBook': '地址',
     'checkout.shippingAddress': '送货地址',
-    'checkout.shippingMethod':'送货方式',
+    'checkout.shippingMethod': '送货方式',
     'tab.editAddress': '编辑地址',
     'global.firstname': '名字',
     'global.telephone': '电话',
@@ -53,7 +53,11 @@ export default {
     'login.fingerprintInvalid': '指纹失效，请用密码登入重新验证',
     'modal.confirm': '确认',
     'modal.cancel': '取消',
-    'login.biometricsLoginSetting': '指纹/脸部识别登入设置',
+    'login.loginSetting_': '指纹/脸部识别登入设置',
+    'login.loginSetting_FINGERPRINT_FACIAL_RECOGNITION': '指纹/脸部识别登入设置',
+    'login.loginSetting_FINGERPRINT': '指纹登入设置',
+    'login.loginSetting_FACIAL_RECOGNITION': '脸部识别登入设置',
+    'login.loginSetting_IRIS': '虹膜识别登入设置',
     'login.biometricsSettingTitle': '试一试快捷登入',
     'tab.biometricsVerify': '安全验证',
     'biometricsVerify.loginWithBiometrics': '指纹脸部/识别登入',
@@ -70,5 +74,9 @@ export default {
     'global.loginWith_FINGERPRINT': '指纹登入',
     'global.loginWith_FACIAL_RECOGNITION': '扫脸登入',
     'global.loginWith_IRIS': '虹膜识别登入',
-    'global.addNewAddress':'新增地址'
+    'global.addNewAddress': '新增地址',
+    'checkout.paymenMethod':'支付方式',
+    'tab.checkoutSuccess':'支付成功',
+    'tab.checkoutFail':'支付失败'
+
 }

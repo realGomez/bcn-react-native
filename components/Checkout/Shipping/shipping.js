@@ -5,11 +5,12 @@ import globalcss from '../../../globalcss';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import EvilIcons from 'react-native-vector-icons/EvilIcons';
 import Fontisto from 'react-native-vector-icons/Fontisto';
+import FormError from '../../../components/FormError/formError';
 
 import { useShipping } from './useShipping';
 import { FormattedMessage } from 'react-intl';
 
-export default function Item(props) {
+export default function Shipping(props) {
 
     const {
         navigation,
@@ -19,6 +20,7 @@ export default function Item(props) {
     const talonProps = useShipping({})
 
     const {
+        errors,
         shippingAddress,
         availableShippingMethods,
         selectedShippingMethod,
@@ -78,11 +80,15 @@ export default function Item(props) {
                 </View>}
             </View>
 
+            <FormError errors={Array.from(errors.values())}
+            />
+
+
             <View style={styles.shippingMethods}>
                 <View style={styles.text}>
                     <Text style={styles.shippingTitleText}><FormattedMessage
                         id={'checkout.shippingMethod'}
-                        defaultMessage={'Method'}
+                        defaultMessage={'hipping Method'}
                     /></Text>
                 </View>
                 {shippingMethods}

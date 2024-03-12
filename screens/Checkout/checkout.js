@@ -4,6 +4,8 @@ import globalcss from '../../globalcss';
 import { useCheckout } from './useCheckout';
 import Item from '../../components/Checkout/Item/item';
 import Shipping from '../../components/Checkout/Shipping/shipping';
+import Payment from '../../components/Checkout/Payment/payment';
+
 
 import PriceSummary from '../../components/Cart/PriceSummary/priceSummary';
 import { FormattedMessage } from 'react-intl';
@@ -19,8 +21,8 @@ export default function Checkout(props) {
         cartItems,
         totalQuantity,
         prices,
-        shippingAddress
-    } = useCheckout({})
+        handlePlaceOrder
+    } = useCheckout({navigation})
 
 
     const itemsHtml = cartItems.map(item => <Item key={item.id} item={item} navigation={navigation} />)
@@ -61,16 +63,21 @@ export default function Checkout(props) {
                 </View>
 
                 <View style={styles.section}>
-                    <Shipping navigation={navigation}/>
+                    <Shipping navigation={navigation} />
                 </View>
 
-                {itemsHtml}
+                <View style={styles.section}>
+                    <Payment navigation={navigation} />
+                </View>
 
+                <View style={styles.section}>
+                    {itemsHtml}
+                </View>
                 <View style={styles.section}>
                     <PriceSummary prices={prices} />
                 </View>
                 <TouchableHighlight
-                    // onPress={handleSubmit} 
+                    onPress={handlePlaceOrder} 
                     style={styles.touchableHighlight}
                 >
                     <View style={styles.primaryButton}>

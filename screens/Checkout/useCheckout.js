@@ -1,18 +1,22 @@
 import { useLazyQuery, useQuery, useMutation, InMemoryCache } from '@apollo/client';
-import { GET_CART_DETAIL } from '../Cart/cart.gql';
+import { GET_CART_DETAIL, CREATE_CART, PLACE_ORDER } from './checkout.gql';
 import { useEffect, useMemo, useState, useCallback } from 'react';
-// import { setToken, setUserInfo } from '../../redux/reducers/cart'
+import { setNextValidStep, setNextSubmitStep } from '../../redux/reducers/checkout'
+import { setCartId, setTotalQuantity } from '../../redux/reducers/cart'
+
 import { useSelector, useDispatch } from 'react-redux'
 
 export const useCheckout = props => {
 
-    const { sku } = props;
+    const {
+        navigation
+    } = props;
 
     const { cartId } = useSelector((state) => state.cart)
-    const { shippingAddress } = useSelector((state) => state.checkout)
-
-
+    const { stepCodes, validStep, submitStep } = useSelector((state) => state.checkout)
     const dispatch = useDispatch()
+
+    const [enableRedirect, setEnableRedirect] = useState(false);
 
     const { data, error, loading } = useQuery(GET_CART_DETAIL, {
         fetchPolicy: 'cache-and-network',
@@ -21,6 +25,19 @@ export const useCheckout = props => {
         variables: { cart_id: cartId }
 
     });
+
+    const [
+        placeOrder,
+        {
+            data: placeOrderData,
+            error: placeOrderError,
+            loading: placeOrderLoading,
+            called: placeOrderCalled
+        }
+    ] = useMutation(PLACE_ORDER);
+
+    const [createCart, { error: createCartError }] = useMutation(CREATE_CART);
+
 
     const cartItems = useMemo(() => {
         return (data && data.cart.items) || [];
@@ -36,10 +53,73 @@ export const useCheckout = props => {
     }, [data]);
 
 
+    console.log('validStep, submitStep', validStep, '-', submitStep);
 
-    console.log('cart data', data);
-    console.log('cart error', error);
+    // console.log('cart data', data);
+    // console.log('cart error', error);
 
+    const handlePlaceOrder = useCallback(() => {
+
+        console.log('placeOrder index');
+
+        dispatch(setNextValidStep({
+            code: 'shipping',
+            stepCodes: stepCodes
+        }))
+    }, [
+        setNextValidStep,
+        stepCodes
+    ])
+
+    const placeOrderAction = useCallback(async () => {
+
+        try {
+
+            await placeOrder({
+                variables: {
+                    cartId,
+                }
+            });
+
+            const cartRes = await createCart({});
+
+            dispatch(setCartId(cartRes.data.cartId))
+            dispatch(setTotalQuantity(0))
+
+            setEnableRedirect(true)
+
+        } catch (error) {
+            console.error('error', error);
+        }
+
+
+    }, [
+        cartId,
+        setEnableRedirect
+    ])
+
+
+    useEffect(() => {
+        if (submitStep == 'place_order') {
+            placeOrderAction()
+        }
+    }, [submitStep])
+
+
+    useEffect(() => {
+
+        console.log('placeOrderData', placeOrderData);
+        if (placeOrderData && placeOrderData.placeOrder && placeOrderData.placeOrder.order && placeOrderData.placeOrder.order.order_number && enableRedirect) {
+            // history.push(`/checkout/checkOrder?order_num=${placeOrderData.placeOrder.order.order_number}`);
+            navigation.navigate('', {
+
+            })
+        }
+    }, [
+        placeOrderData,
+        enableRedirect,
+        navigation
+    ])
 
 
     return {
@@ -47,7 +127,8 @@ export const useCheckout = props => {
         totalQuantity,
         prices,
         loading,
-        shippingAddress
+        // shippingAddress
+        handlePlaceOrder
     }
 
 }

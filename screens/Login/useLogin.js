@@ -92,7 +92,6 @@ export const useLogin = props => {
         initValidate = new WxValidate(rules, messages)
     }, [])
 
-    console.log('BioType', bioType);
 
     useEffect(() => {
         (async () => {
@@ -240,7 +239,6 @@ export const useLogin = props => {
 
 
     const onChangeField = useCallback((name, value) => {
-        console.log('name,value', name, value);
         setFormValues((prevState) => ({
             ...prevState,
             [name]: value
@@ -356,7 +354,7 @@ export const useLogin = props => {
 
 
     const hanldeConfirm = useCallback(() => {
-        setShowModal(true);
+        setShowModal(false);
         setEnableReditect(false)
         navigation.navigate('BiometricsVerify', {
 

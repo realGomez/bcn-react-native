@@ -20,6 +20,10 @@ import MyAccount from '../../screens/MyAccount';
 import CategoryTree from '../../screens/CategoryTree';
 import Cart from '../../screens/Cart';
 import Checkout from '../../screens/Checkout';
+import CheckoutSuccess from '../../screens/Checkout/CheckoutSuccess/checkoutSuccess';
+import CheckoutFail from '../../screens/Checkout/CheckoutFail/checkoutFail';
+
+
 import AddressBook from '../../screens/AddressBook';
 import EditAddress from '../../screens/AddressBook/EditAddress/editAddress';
 
@@ -193,6 +197,20 @@ function CartStackTabs() {
           title: formatMessage({ id: 'tab.checkout', defaultMessage: 'Checkout' })
         }}
         component={Checkout} />
+      <CategoryStack.Screen
+        name='CheckoutSuccess'
+        options={{
+          title: formatMessage({ id: 'tab.checkoutSuccess', defaultMessage: 'Checkout Success' })
+        }}
+        component={CheckoutSuccess} />
+
+      <CategoryStack.Screen
+        name='CheckoutFail'
+        options={{
+          title: formatMessage({ id: 'tab.checkoutFail', defaultMessage: 'Checkout Fail' })
+        }}
+        component={CheckoutFail} />
+
       <CategoryStack.Screen
         name='AddressBook'
         options={{

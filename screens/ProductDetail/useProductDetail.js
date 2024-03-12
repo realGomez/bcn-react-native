@@ -109,9 +109,9 @@ export const useProductDetail = props => {
         setOptionCodes(deriveOptionCodesFromProduct(product))
     }, [product])
 
-    console.log('derivedOptionSelections', derivedOptionSelections);
-    console.log('optionCodes', optionCodes);
-    console.log('optionSelections', optionSelections);
+    // console.log('derivedOptionSelections', derivedOptionSelections);
+    // console.log('optionCodes', optionCodes);
+    // console.log('optionSelections', optionSelections);
 
     const handleSelectionChange = useCallback(
         (optionId, selection) => {

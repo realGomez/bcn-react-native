@@ -131,7 +131,7 @@ const BiometricsVerify = props => {
         <View style={styles.container}>
             <TouchableHighlight onPress={hanldeStoreSwitch}>
                 <View style={styles.item}>
-                    <Text><FormattedMessage id='biometricsVerify.loginWithBiometrics' defaultMessage={'Login with Biometrics'} /></Text>
+                    <Text><FormattedMessage id={`global.loginWith_${bioType}`} defaultMessage={'Login with Biometrics'} /></Text>
                     {biometricsEnable ? <Fontisto name="checkbox-active" size={12} /> : <Fontisto name="checkbox-passive" size={12} />}
                 </View>
 
