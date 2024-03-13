@@ -21,11 +21,20 @@ export default function Shipping(props) {
 
     const {
         errors,
+        errorList,
         shippingAddress,
         availableShippingMethods,
         selectedShippingMethod,
         hanldeSelectedShippingMethod
     } = talonProps;
+
+    const errorShippingAddress = errorList.find(item => {
+        return item.param == 'shippingAddress'
+    })
+
+    const errorShippingMethod = errorList.find(item => {
+        return item.param == 'shippingMethod'
+    })
 
 
     const shippingMethods = availableShippingMethods.map(item => {
@@ -78,6 +87,10 @@ export default function Shipping(props) {
                         </View>
                     </TouchableHighlight>
                 </View>}
+
+                {errorShippingAddress ? <View style={styles.error}>
+                    <Text style={styles.errorText}>{errorShippingAddress.msg}</Text>
+                </View> : ''}
             </View>
 
             <FormError errors={Array.from(errors.values())}
@@ -92,6 +105,10 @@ export default function Shipping(props) {
                     /></Text>
                 </View>
                 {shippingMethods}
+
+                {errorShippingMethod ? <View style={styles.error}>
+                    <Text style={styles.errorText}>{errorShippingMethod.msg}</Text>
+                </View> : ''}
             </View>
         </View>
 
@@ -128,12 +145,18 @@ const styles = StyleSheet.create({
 
     },
     shippingMethods: {
-        padding: globalcss.indent_s,
+        // padding: globalcss.indent_s,
         marginTop: globalcss.indent_m,
     },
     shippingTitleText: {
         fontWeight: 'bold'
 
+    },
+    error: {
+        marginTop: 4
+    },
+    errorText: {
+        ...globalcss.error
     }
 
 })

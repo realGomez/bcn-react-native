@@ -212,9 +212,19 @@ export const useProductDetail = props => {
         optionSelections
     ])
 
+    const errors = useMemo(
+        () =>
+            new Map([
+                ['errorAddingConfigurableProduct', errorAddingConfigurableProduct],
+                ['errorAddingSimpleProduct', errorAddingSimpleProduct]
+
+            ]),
+        [errorAddingConfigurableProduct, errorAddingSimpleProduct]
+    );
 
 
     return {
+        errors,
         product,
         optionSelections,
         optionCodes,

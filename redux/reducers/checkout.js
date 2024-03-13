@@ -8,6 +8,7 @@ export const checkoutSlice = createSlice({
         stepCodes: ['shipping', 'payment'],
         validStep: '',
         submitStep: '',
+        errorStep: ''
     },
     reducers: {
         setShippingAddress: (state, action) => {
@@ -19,15 +20,6 @@ export const checkoutSlice = createSlice({
         setNextValidStep: (state, action) => {
 
             const { code, stepCodes } = action.payload;
-            const index = stepCodes.indexOf(code)
-
-            // if (index == -1) {
-            //     state.validStep = stepCodes[0]
-            // } else if (index == stepCodes.length - 1) {
-            //     state.validStep = ''
-            // } else {
-            //     state.validStep = stepCodes[index + 1]
-            // }
 
             state.validStep = code
 
@@ -35,22 +27,18 @@ export const checkoutSlice = createSlice({
         setNextSubmitStep: (state, action) => {
 
             const { code, stepCodes } = action.payload;
-            const index = stepCodes.indexOf(code)
 
-            // if (index == -1) {
-            //     state.submitStep = stepCodes[0]
-            // } else if (index == stepCodes.length - 1) {
-            //     state.submitStep = ''
-            // } else {
-            //     state.submitStep = stepCodes[index + 1]
-            // }
             state.submitStep = code
+        },
+        setErrorStep: (state, action) => {
+            const { code, stepCodes } = action.payload;
+            state.errorStep = code
         },
 
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setShippingAddress, setEditAddress, setNextValidStep, setNextSubmitStep } = checkoutSlice.actions
+export const { setShippingAddress, setEditAddress, setNextValidStep, setNextSubmitStep, setErrorStep } = checkoutSlice.actions
 
 export default checkoutSlice.reducer

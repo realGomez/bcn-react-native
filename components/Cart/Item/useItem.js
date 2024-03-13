@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Alert } from 'react-native';
 import { useMutation, useQuery } from '@apollo/client';
 import { deriveErrorMessage } from '../../../utils/deriveErrorMessage';
 import configuredVariant from '../../../utils/configuredVariant';
 import DEFAULT_OPERATIONS from './product.gql';
 import { useSelector, useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl';
 
 
 export const useItem = props => {
@@ -13,6 +15,7 @@ export const useItem = props => {
         setIsCartUpdating,
     } = props;
 
+    const { formatMessage } = useIntl();
     const { cartId } = useSelector((state) => state.cart)
 
     // const operations = mergeOperations(DEFAULT_OPERATIONS, props.operations);
@@ -99,12 +102,32 @@ export const useItem = props => {
     const handleRemoveFromCart = useCallback(() => {
         try {
 
-            removeItem({
-                variables: {
-                    cartId,
-                    itemId: item.id,
+            Alert.alert(formatMessage({ id: `cartItem.confirmToDelete`, defaultMessage: 'Confirm delete?' }),
+                formatMessage({ id: `cartItem.deleteItemFromCart`, defaultMessage: 'Delete Item from cart' }),
+                [
+                    {
+                        text: formatMessage({ id: `global.confirm`, defaultMessage: 'OK' }),
+                        onPress: () => {
+                            removeItem({
+                                variables: {
+                                    cartId,
+                                    itemId: item.id,
+                                }
+                            });
+                        }
+                    },
+                    {
+                        text: formatMessage({ id: `global.cancel`, defaultMessage: 'Cancel' }),
+                        // onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                    },
+                ],
+                {
+                    cancelable: false,
                 }
-            });
+            );
+
+
 
         } catch (err) {
             // Make sure any errors from the mutation are displayed.

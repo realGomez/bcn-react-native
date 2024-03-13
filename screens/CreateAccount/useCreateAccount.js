@@ -1,5 +1,12 @@
 import { useLazyQuery, useQuery, useMutation } from '@apollo/client';
-import { SIGN_IN, GET_CUSTOMER, CREATE_CART, MERGE_CARTS, GET_CART_DETAILS_QUERY } from './login.gql';
+import {
+    CREATE_ACCOUNT,
+    SIGN_IN,
+    GET_CUSTOMER,
+    CREATE_CART,
+    MERGE_CARTS,
+    GET_CART_DETAILS_QUERY
+} from './createAccount.gql';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Alert } from 'react-native';
 import { useIntl } from 'react-intl';
@@ -16,7 +23,7 @@ import WxValidate from '../../utils/wxValidate';
 let initValidate;
 
 
-export const useLogin = props => {
+export const useCreateAccount = props => {
 
     const { navigation } = props;
 
@@ -59,6 +66,9 @@ export const useLogin = props => {
     });
 
     const [signIn, { loading: signInLoading, error: signInError }] = useMutation(SIGN_IN)
+
+    const [createCustomer, { loading: createCustomerLoading, error: createCustomerError }] = useMutation(CREATE_ACCOUNT)
+
     const [createEmptyCart, { loading: createEmptyCartLoading, error: createEmptyCartError }] = useMutation(CREATE_CART);
     const [mergeCarts] = useMutation(MERGE_CARTS);
 
@@ -67,6 +77,12 @@ export const useLogin = props => {
     useEffect(() => {
 
         const rules = {
+            firstname: {
+                required: true
+            },
+            lastname: {
+                required: true
+            },
             email: {
                 email: true,
                 required: true
@@ -76,6 +92,12 @@ export const useLogin = props => {
             }
         }
         const messages = {
+            firstname: {
+                required: formatMessage({ id: 'global.required', defaultMessage: 'Required' })
+            },
+            lastname: {
+                required: formatMessage({ id: 'global.required', defaultMessage: 'Required' })
+            },
             email: {
                 email: formatMessage({ id: 'global.enterEmail', defaultMessage: 'Enter Email' }),
                 required: formatMessage({ id: 'global.required', defaultMessage: 'Required' })
@@ -293,6 +315,20 @@ export const useLogin = props => {
 
         try {
 
+
+            await createCustomer({
+                variables: {
+                    input:{
+                        firstname: formValues.firstname,
+                        lastname: formValues.lastname,
+                        email: formValues.email,
+                        password: formValues.password,
+                        is_subscribed:false
+                    }
+                   
+                }
+            })
+
             const res = await signIn({
                 variables: {
                     email: formValues.email,
@@ -372,21 +408,22 @@ export const useLogin = props => {
     }, [])
 
 
-    const handleCreateAccount = useCallback(()=>{
-        navigation.navigate('CreateAccount', {
+    const handleLogin = useCallback(() => {
+        navigation.navigate('Login', {
 
         });
-    },[])
+    })
 
 
     const errors = useMemo(
         () =>
             new Map([
                 ['signInError', signInError],
-                ['createEmptyCartError', createEmptyCartError]
+                ['createEmptyCartError', createEmptyCartError],
+                ['createCustomerError', createCustomerError]
 
             ]),
-        [signInError, createEmptyCartError]
+        [signInError, createEmptyCartError, createCustomerError]
     );
 
     return {
@@ -407,7 +444,7 @@ export const useLogin = props => {
         handleLoginTypeSwitch,
         loginComplete,
         bioAccount,
-        handleCreateAccount
+        handleLogin
     }
 
 }

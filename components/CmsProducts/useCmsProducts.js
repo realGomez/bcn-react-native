@@ -19,9 +19,19 @@ export const useCmsProducts = props => {
 
         } else if (attr['data-appearance'] == "grid" && nodes.length > 0) {
 
+            // items
             const skus = nodes[0]['nodes'][0]['nodes'][0]['nodes'][0]['nodes'].map((item) => {
 
-                return item['nodes'][0]['nodes'][1]['nodes'][5] ? item['nodes'][0]['nodes'][1]['nodes'][5]['nodes'][0]['nodes'][0]['nodes'][0]['attr']['data-product-sku'] : item['nodes'][0]['nodes'][1]['nodes'][4]['nodes'][0]['nodes'][0]['nodes'][0]['attr']['data-product-sku'];
+                // 0 product-item-info-> 1 product-item-details-> [0-5]product-item-inner->  0 product-item-actions->0 actions-primary->0 tocart-form
+                // return item['nodes'][0]['nodes'][1]['nodes'][5] ? item['nodes'][0]['nodes'][1]['nodes'][5]['nodes'][0]['nodes'][0]['nodes'][0]['attr']['data-product-sku'] : item['nodes'][0]['nodes'][1]['nodes'][4]['nodes'][0]['nodes'][0]['nodes'][0]['attr']['data-product-sku'];
+
+                const itemDetailChilNodes = item['nodes'][0]['nodes'][1]['nodes'];
+
+                const matchNode = itemDetailChilNodes.find(childNode => {
+                    return childNode.classStr == "product-item-inner"
+                })
+
+                return matchNode ? matchNode['nodes'][0]['nodes'][0]['nodes'][0]['attr']['data-product-sku'] : '';
 
             })
 

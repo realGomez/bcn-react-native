@@ -33,6 +33,7 @@ export default {
     'checkout.shippingMethod': '送货方式',
     'tab.editAddress': '编辑地址',
     'global.firstname': '名字',
+    'global.lastname': '姓',
     'global.telephone': '电话',
     'global.street': '街道',
     'country.countryRegion': '国家/地区',
@@ -75,8 +76,14 @@ export default {
     'global.loginWith_FACIAL_RECOGNITION': '扫脸登入',
     'global.loginWith_IRIS': '虹膜识别登入',
     'global.addNewAddress': '新增地址',
-    'checkout.paymenMethod':'支付方式',
-    'tab.checkoutSuccess':'支付成功',
-    'tab.checkoutFail':'支付失败'
+    'checkout.paymenMethod': '支付方式',
+    'tab.checkoutSuccess': '支付成功',
+    'tab.checkoutFail': '支付失败',
+    'cartItem.confirmToDelete': '确认删除？',
+    'cartItem.deleteItemFromCart': '从购物车删除该商品',
+    'tab.createAccount': '注册',
+    'global.createAccount': '注册',
+    'myAccount.orderHistory':'我的订单',
+    'myAccount.logout':'登出'
 
 }

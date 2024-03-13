@@ -18,7 +18,7 @@ export default function MyAccount(props) {
 
             <View style={styles.section}>
                 {isSignedIn ?
-                    <View  style={styles.link}>
+                    <View style={styles.link}>
                         <Text>{userInfo.firstname}</Text>
 
                     </View>
@@ -39,6 +39,22 @@ export default function MyAccount(props) {
                     </TouchableHighlight>}
 
                 {isSignedIn ? <TouchableHighlight onPress={() => {
+                    navigation.navigate('OrderHistory', {
+
+                    })
+                }}>
+                    <View style={styles.link}>
+                        <Text style={styles.text}>
+                            <FormattedMessage
+                                id={'myAccount.orderHistory'}
+                                defaultMessage={'Order History'}
+                            />
+                        </Text>
+                        <AntDesign name="right" color={'#000000'} size={10} />
+                    </View>
+                </TouchableHighlight> : ''}
+
+                {isSignedIn ? <TouchableHighlight onPress={() => {
                     navigation.navigate('BiometricsVerify', {
 
                     })
@@ -56,7 +72,7 @@ export default function MyAccount(props) {
 
             </View>
 
-           
+
             <View style={styles.section}>
                 <TouchableHighlight onPress={() => {
                     navigation.navigate('StoreSwitcher', {
@@ -74,6 +90,22 @@ export default function MyAccount(props) {
                     </View>
                 </TouchableHighlight>
             </View>
+
+            {isSignedIn ? <TouchableHighlight onPress={() => {
+                // navigation.navigate('OrderHistory', {
+
+                // })
+            }}>
+                <View style={styles.link}>
+                    <Text style={styles.text}>
+                        <FormattedMessage
+                            id={'myAccount.logout'}
+                            defaultMessage={'Logout'}
+                        />
+                    </Text>
+                    <AntDesign name="right" color={'#000000'} size={10} />
+                </View>
+            </TouchableHighlight> : ''}
 
         </View>
     );

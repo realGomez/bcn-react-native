@@ -51,7 +51,7 @@ export default function Item(props) {
                     }}
                 >
                     <View>
-                        <Image resizeMethod='auto' style={{ width: 150, height: 150 }} source={{ uri: item.product.thumbnail.url }} />
+                        <Image resizeMethod='auto' style={{ width: 120, height: 120 }} source={{ uri: item.product.thumbnail.url }} />
                     </View>
                 </Pressable>
             </View>
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
 
     },
     image: {
-        width: 150,
+        width: 120,
         padding: 10,
     },
     itemDetail: {

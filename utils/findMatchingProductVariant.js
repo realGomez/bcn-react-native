@@ -2,7 +2,7 @@
  * TODO Document
  */
 export const findMatchingVariant = ({
-    variants,
+    variants=[],
     optionCodes,
     optionSelections
 }) => {

@@ -1,7 +1,7 @@
 import { useLazyQuery, useQuery, useMutation, InMemoryCache } from '@apollo/client';
 import { GET_CART_DETAIL, CREATE_CART, PLACE_ORDER } from './checkout.gql';
-import { useEffect, useMemo, useState, useCallback } from 'react';
-import { setNextValidStep, setNextSubmitStep } from '../../redux/reducers/checkout'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react';
+import { setNextValidStep, setNextSubmitStep, setErrorStep } from '../../redux/reducers/checkout'
 import { setCartId, setTotalQuantity } from '../../redux/reducers/cart'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -13,10 +13,11 @@ export const useCheckout = props => {
     } = props;
 
     const { cartId } = useSelector((state) => state.cart)
-    const { stepCodes, validStep, submitStep } = useSelector((state) => state.checkout)
+    const { stepCodes, validStep, submitStep, errorStep } = useSelector((state) => state.checkout)
     const dispatch = useDispatch()
 
     const [enableRedirect, setEnableRedirect] = useState(false);
+    const scrollViewRef = useRef(null)
 
     const { data, error, loading } = useQuery(GET_CART_DETAIL, {
         fetchPolicy: 'cache-and-network',
@@ -122,13 +123,21 @@ export const useCheckout = props => {
     ])
 
 
+    useEffect(() => {
+        if (errorStep && scrollViewRef.current) {
+            scrollViewRef.current.scrollTo({ x: 0, y: 0, animated: true })
+            dispatch(setErrorStep(''))
+        }
+    }, [errorStep])
+
     return {
         cartItems,
         totalQuantity,
         prices,
         loading,
         // shippingAddress
-        handlePlaceOrder
+        handlePlaceOrder,
+        scrollViewRef
     }
 
 }

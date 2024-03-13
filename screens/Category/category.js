@@ -37,7 +37,7 @@ export default function Category(props) {
                                         <Image resizeMethod='auto' style={{ width: '100%', height: 150 }} source={{ uri: item.small_image.url }} />
                                     </View>
                                     <View>
-                                        <Text>{item.name}</Text>
+                                        <Text numberOfLines={1}>{item.name}</Text>
                                     </View>
                                     <Price value={item.price_range.minimum_price.final_price.value} currency={item.price_range.minimum_price.final_price.currency} />
                                 </View>

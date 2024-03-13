@@ -2,18 +2,21 @@ import { useLazyQuery, useQuery, useMutation, InMemoryCache } from '@apollo/clie
 import { GET_PAYMENT_INFORMATION, SET_PAYMENT_METHOD_ON_CART, SET_BILLING_ADDRESS } from './paymentInformation.gql';
 
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { setShippingAddress, setEditAddress, setNextValidStep, setNextSubmitStep } from '../../../redux/reducers/checkout'
+import { setShippingAddress, setEditAddress, setNextValidStep, setNextSubmitStep, setErrorStep } from '../../../redux/reducers/checkout'
 import { useSelector, useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl';
 
 export const usePayment = props => {
 
     const { navigation } = props
+    const { formatMessage } = useIntl();
 
     const { cartId } = useSelector((state) => state.cart)
     const { shippingAddress, stepCodes, validStep, submitStep } = useSelector((state) => state.checkout)
     const dispatch = useDispatch()
 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
+    const [errorList, setErrorList] = useState([]);
 
     const { data: cartData, error: cartError, loading: cartLoading } = useQuery(GET_PAYMENT_INFORMATION, {
         fetchPolicy: 'cache-and-network',
@@ -66,8 +69,16 @@ export const usePayment = props => {
                 stepCodes: stepCodes
             }))
         } else if (validStep == 'payment' && (!selectedPaymentMethod)) {
+            setErrorList([
+                { param: 'paymentMethod', msg: formatMessage({ id: 'global.required', defaultMessage: 'Required' }) },
+            ])
             dispatch(setNextValidStep({
                 code: '',
+                stepCodes: stepCodes
+            }))
+
+            dispatch(setErrorStep({
+                code: 'payment',
                 stepCodes: stepCodes
             }))
         }
@@ -156,6 +167,11 @@ export const usePayment = props => {
                     code: '',
                     stepCodes: stepCodes
                 }))
+
+                dispatch(setErrorStep({
+                    code: 'payment',
+                    stepCodes: stepCodes
+                }))
             }
 
 
@@ -177,6 +193,7 @@ export const usePayment = props => {
 
     return {
         errors,
+        errorList,
         availablePaymentMethods,
         selectedPaymentMethod,
         hanldeSelectedPaymentMethod

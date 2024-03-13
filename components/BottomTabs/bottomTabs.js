@@ -33,6 +33,8 @@ import Category from '../../screens/Category';
 import ProductDetail from '../../screens/ProductDetail';
 import StoreSwitcher from '../../screens/StoreSwitcher/storeSwitcher';
 import Login from '../../screens/Login/login';
+import CreateAccount from '../../screens/CreateAccount/createAccount';
+
 import BiometricsVerify from '../../screens/BiometricsVerify';
 // const IconTabHome = () => {
 //   return <Image style={{ width: 30, height: 30 }} source={require('../../assets/images/tabs/home.svg')} />
@@ -279,6 +281,12 @@ function AccountStackTabs() {
 
         }}
         component={Login} />
+      <CategoryStack.Screen name="CreateAccount"
+        options={{
+          title: formatMessage({ id: 'tab.createAccount', defaultMessage: 'Create Account' })
+
+        }}
+        component={CreateAccount} />
 
       <CategoryStack.Screen name="BiometricsVerify"
         options={{
@@ -298,7 +306,10 @@ export default function BottomTabs(props) {
 
   return (<NavigationContainer>
     <Tab.Navigator
-    // tabBar={props => <MyTabBar {...props} />}
+      // tabBar={props => <MyTabBar {...props} />}
+      screenOptions={{
+        tabBarHideOnKeyboard: true,
+      }}
     >
       <Tab.Screen
         name="HomeStackTabs"

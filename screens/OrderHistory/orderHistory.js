@@ -3,12 +3,12 @@ import { View, Pressable, Text, Image, StyleSheet, ScrollView, Dimensions } from
 
 import { bool, func, number, oneOfType, shape, string } from 'prop-types';
 
-import { useTile } from './useTile';
+import { useOrderHistory } from './useOrderHistory';
 
 const getClassName = (name, isSelected, hasFocus) =>
     `${name}${isSelected ? '_selected' : ''}`;
 
-const Tile = props => {
+const OrderHistory = props => {
     const {
         hasFocus,
         isSelected,
@@ -16,7 +16,7 @@ const Tile = props => {
         onClick
     } = props;
 
-    const talonProps = useTile({
+    const talonProps = useOrderHistory({
         onClick,
         value_index
     });
@@ -35,9 +35,9 @@ const Tile = props => {
     );
 };
 
-export default Tile;
+export default OrderHistory;
 
-Tile.propTypes = {
+OrderHistory.propTypes = {
     hasFocus: bool,
     isSelected: bool,
     item: shape({
@@ -47,7 +47,7 @@ Tile.propTypes = {
     onClick: func.isRequired
 };
 
-Tile.defaultProps = {
+OrderHistory.defaultProps = {
     hasFocus: false,
     isSelected: false
 };
@@ -61,8 +61,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#245798',
         borderRadius: 3,
         color: '#ffffff',
-        marginRight: 5,
-
+        marginRight:5,
+        
 
     },
     root_selected: {
@@ -73,6 +73,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#accc3b',
         borderRadius: 3,
         color: '#ffffff',
-        marginRight: 5
+        marginRight:5
     }
 })

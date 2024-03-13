@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { saveStoreItemAsync, getStoreItemAsync } from '../../utils/secureStore';
-const token =  getStoreItemAsync('token');
+const token = getStoreItemAsync('token');
 
 
 export const userSlice = createSlice({
@@ -8,17 +8,19 @@ export const userSlice = createSlice({
     initialState: {
         token: null,
         userInfo: {},
-        isSignedIn:false
+        isSignedIn: false
     },
     reducers: {
         setToken: (state, action) => {
             state.token = action.payload
-            state.isSignedIn= true
+            state.isSignedIn = true
 
         },
         clearToken: (state) => {
             state.token = null
-            state.isSignedIn= false
+            state.isSignedIn = false,
+            state.userInfo = {},
+            isSignedIn = false
         },
         setUserInfo: (state, action) => {
             state.userInfo = action.payload

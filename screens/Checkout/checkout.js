@@ -21,8 +21,9 @@ export default function Checkout(props) {
         cartItems,
         totalQuantity,
         prices,
-        handlePlaceOrder
-    } = useCheckout({navigation})
+        handlePlaceOrder,
+        scrollViewRef
+    } = useCheckout({ navigation })
 
 
     const itemsHtml = cartItems.map(item => <Item key={item.id} item={item} navigation={navigation} />)
@@ -48,8 +49,9 @@ export default function Checkout(props) {
 
 
     return (
-        <View style={styles.container}>
-            <ScrollView>
+        <ScrollView ref={scrollViewRef}>
+            <View style={styles.container}>
+
                 <View style={styles.title}>
                     <Text>
                         <FormattedMessage
@@ -76,18 +78,21 @@ export default function Checkout(props) {
                 <View style={styles.section}>
                     <PriceSummary prices={prices} />
                 </View>
-                <TouchableHighlight
-                    onPress={handlePlaceOrder} 
-                    style={styles.touchableHighlight}
-                >
-                    <View style={styles.primaryButton}>
-                        <Text style={styles.primaryButtonText}>
-                            <FormattedMessage id='checkout.pay' defaultMessage={'Pay'} />
-                        </Text>
-                    </View>
-                </TouchableHighlight>
-            </ScrollView>
-        </View>
+
+                <View style={styles.toolbar}>
+                    <TouchableHighlight
+                        onPress={handlePlaceOrder}
+                        style={styles.touchableHighlight}
+                    >
+                        <View style={styles.primaryButton}>
+                            <Text style={styles.primaryButtonText}>
+                                <FormattedMessage id='checkout.pay' defaultMessage={'Pay'} />
+                            </Text>
+                        </View>
+                    </TouchableHighlight>
+                </View>
+            </View>
+        </ScrollView>
     );
 }
 
@@ -124,9 +129,11 @@ const styles = StyleSheet.create({
         marginRight: 'auto',
         flexGrow: 1
     },
+    toolbar: {
+        marginTop: 20
+    },
     primaryButton: {
         ...globalcss.primaryButton,
-        marginTop: 20
     },
     primaryButtonText: {
         ...globalcss.primaryButtonText

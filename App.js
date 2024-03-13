@@ -21,6 +21,8 @@ const apiBase = HomePage.graphql;
 import { IntlProvider, FormattedMessage, FormattedNumber } from 'react-intl'
 import LocaleProvider from './localeProvider';
 import CartProvider from './cartProvider';
+import UserProvider from './userProvider';
+
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler' // fix Carousel swap not smooth
 import store from './redux/store';
@@ -111,6 +113,7 @@ export default function App() {
     <Adapter apiBase={apiBase} apollo={{ link: apolloLink }} store={store}>
       <LocaleProvider>
         <CartProvider />
+        <UserProvider/>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <StatusBar style="auto" />
           <BottomTabsBottomTabs />

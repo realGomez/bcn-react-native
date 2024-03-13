@@ -3,18 +3,22 @@ import { GET_CUSTOMER_QUERY } from '../../../screens/AddressBook/addressBook.gql
 import { GET_CART_SHIPPING, SET_CUSTOMER_ADDRESS_ON_CART, SET_SHIPPING_METHOD } from './shippoing.gql';
 
 import { useEffect, useMemo, useState, useCallback } from 'react';
-import { setShippingAddress, setEditAddress, setNextValidStep, setNextSubmitStep } from '../../../redux/reducers/checkout'
+import { setShippingAddress, setEditAddress, setNextValidStep, setNextSubmitStep, setErrorStep } from '../../../redux/reducers/checkout'
 import { useSelector, useDispatch } from 'react-redux'
+import { useIntl } from 'react-intl';
+
 
 export const useShipping = props => {
 
     const { navigation } = props
+    const { formatMessage } = useIntl();
 
     const { cartId } = useSelector((state) => state.cart)
     const { shippingAddress, stepCodes, validStep, submitStep } = useSelector((state) => state.checkout)
     const dispatch = useDispatch()
 
     const [selectedShippingMethod, setSelectedShippingMethod] = useState('');
+    const [errorList, setErrorList] = useState([]);
 
     const { data, error, loading } = useQuery(GET_CUSTOMER_QUERY, {
         fetchPolicy: 'cache-and-network',
@@ -86,13 +90,35 @@ export const useShipping = props => {
 
     useEffect(() => {
         if (validStep == 'shipping' && selectedShippingMethod && shippingAddress) {
+            setErrorList([])
             dispatch(setNextValidStep({
                 code: 'payment',
                 stepCodes: stepCodes
             }))
         } else if (validStep == 'shipping' && (!selectedShippingMethod || !shippingAddress)) {
+            if (!selectedShippingMethod && !shippingAddress) {
+                setErrorList([
+                    { param: 'shippingAddress', msg: formatMessage({ id: 'global.required', defaultMessage: 'Required' }) },
+                    { param: 'shippingMethod', msg: formatMessage({ id: 'global.required', defaultMessage: 'Required' }) }
+                ])
+            } else if (!shippingAddress) {
+                setErrorList([
+                    { param: 'shippingAddress', msg: formatMessage({ id: 'global.required', defaultMessage: 'Required' }) },
+                ])
+            } else if (!selectedShippingMethod) {
+                setErrorList([
+                    { param: 'shippingMethod', msg: formatMessage({ id: 'global.required', defaultMessage: 'Required' }) }
+                ])
+            } else {
+                setErrorList([])
+            }
             dispatch(setNextValidStep({
                 code: '',
+                stepCodes: stepCodes
+            }))
+
+            dispatch(setErrorStep({
+                code: 'shipping',
                 stepCodes: stepCodes
             }))
         }
@@ -163,10 +189,16 @@ export const useShipping = props => {
                 code: 'payment',
                 stepCodes: stepCodes
             }))
+
         } catch (error) {
             console.log('shipping error', error);
             dispatch(setNextSubmitStep({
                 code: '',
+                stepCodes: stepCodes
+            }))
+
+            dispatch(setErrorStep({
+                code: 'shipping',
                 stepCodes: stepCodes
             }))
         }
@@ -189,6 +221,7 @@ export const useShipping = props => {
 
     return {
         errors,
+        errorList,
         shippingAddress,
         availableShippingMethods,
         selectedShippingMethod,

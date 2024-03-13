@@ -21,11 +21,15 @@ export default function Payment(props) {
 
     const {
         errors,
+        errorList,
         availablePaymentMethods,
         selectedPaymentMethod,
         hanldeSelectedPaymentMethod
     } = talonProps;
 
+    const errorPaymentMethod = errorList.find(item => {
+        return item.param == 'paymentMethod'
+    })
 
     const paymentMethods = availablePaymentMethods.map(item => {
         return (
@@ -53,6 +57,9 @@ export default function Payment(props) {
                 {paymentMethods}
                 <FormError errors={Array.from(errors.values())}
                 />
+                {errorPaymentMethod ? <View style={styles.error}>
+                    <Text style={styles.errorText}>{errorPaymentMethod.msg}</Text>
+                </View> : ''}
             </View>
         </View>
 
@@ -89,11 +96,17 @@ const styles = StyleSheet.create({
 
     },
     shippingMethods: {
-        padding: globalcss.indent_s,
+        // padding: globalcss.indent_s,
     },
     shippingTitleText: {
         fontWeight: 'bold'
 
+    },
+    error: {
+        marginTop: 4
+    },
+    errorText: {
+        ...globalcss.error
     }
 
 })

@@ -3,19 +3,19 @@ import { View, Text, StyleSheet, Image, ScrollView, Pressable, TextInput, Toucha
 import globalcss from '../../globalcss';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Field from '../../components/Field/field';
-import { useLogin } from './useLogin';
+import { useCreateAccount } from './useCreateAccount';
 import FormError from '../../components/FormError/formError';
 import ModalPopup from '../../components/ModalPopup/modalPopup';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
-export default function Login(props) {
+export default function CreateAccount(props) {
 
     const { route, navigation } = props;
 
 
     const { formatMessage } = useIntl();
 
-    const talonsProps = useLogin({ navigation });
+    const talonsProps = useCreateAccount({ navigation });
 
     const {
         onChangeField,
@@ -35,7 +35,7 @@ export default function Login(props) {
         handleLoginTypeSwitch,
         loginComplete,
         bioAccount,
-        handleCreateAccount
+        handleLogin
     } = talonsProps;
 
 
@@ -44,6 +44,23 @@ export default function Login(props) {
             <Text style={styles.biometricsSettingTitle}>{bioAccount}</Text>
         </View>
     </View> : <View>
+        {/* <View style={styles.nameField}> */}
+        <Field
+            name='lastname'
+            label={formatMessage({ id: 'global.lastname', defaultMessage: 'Last name' })}
+            placeholder={formatMessage({ id: 'global.enter', defaultMessage: 'Enter' })}
+            onChangeField={onChangeField}
+            formErrors={errorList}
+        />
+        <Field
+            name='firstname'
+            label={formatMessage({ id: 'global.firstname', defaultMessage: 'First name' })}
+            placeholder={formatMessage({ id: 'global.enter', defaultMessage: 'Enter' })}
+            onChangeField={onChangeField}
+            formErrors={errorList}
+        />
+        {/* </View> */}
+
         <Field
             name='email'
             label={formatMessage({ id: 'global.email', defaultMessage: 'Email' })}
@@ -66,7 +83,7 @@ export default function Login(props) {
             <View style={styles.primaryButton}>
                 <Text style={styles.primaryButtonText}>
                     {formatMessage({
-                        id: 'global.login',
+                        id: 'global.createAccount',
                         defaultMessage: 'Login'
                     })}
                 </Text>
@@ -74,19 +91,19 @@ export default function Login(props) {
         </TouchableHighlight>
 
         <View style={styles.toolbar}>
-            <Pressable onPress={handleCreateAccount} disabled={loading} style={styles.touchableHighlightSecondary}>
+            <TouchableHighlight onPress={handleLogin} disabled={loading} style={styles.touchableHighlightSecondary}>
                 <View style={styles.thirdButton}>
                     <Text style={styles.thirdButtonText}>
                         {formatMessage({
-                            id: 'global.signUp',
-                            defaultMessage: 'Sign Up'
+                            id: 'global.login',
+                            defaultMessage: 'Login'
                         })}
                     </Text>
                 </View>
-            </Pressable>
+            </TouchableHighlight>
             {bioSaved ? <Fragment>
                 <View style={styles.lineSplit}></View>
-                <Pressable onPress={() => { handleLoginTypeSwitch('biometric') }} disabled={loading} style={styles.touchableHighlightSecondary}>
+                <TouchableHighlight onPress={() => { handleLoginTypeSwitch('biometric') }} disabled={loading} style={styles.touchableHighlightSecondary}>
                     <View style={styles.thirdButton}>
                         <Text style={styles.thirdButtonText}>
                             {formatMessage({
@@ -95,7 +112,7 @@ export default function Login(props) {
                             })}
                         </Text>
                     </View>
-                </Pressable>
+                </TouchableHighlight>
             </Fragment> : ''}
 
 
@@ -120,7 +137,7 @@ export default function Login(props) {
             />
 
             <View style={styles.toolbar}>
-                <Pressable onPress={handleCreateAccount} disabled={loading} style={styles.touchableHighlightSecondary}>
+                <TouchableHighlight onPress={handleBiometricAuth} disabled={loading} style={styles.touchableHighlightSecondary}>
                     <View style={styles.thirdButton}>
                         <Text style={styles.thirdButtonText}>
                             {formatMessage({
@@ -129,11 +146,11 @@ export default function Login(props) {
                             })}
                         </Text>
                     </View>
-                </Pressable>
+                </TouchableHighlight>
 
                 <View style={styles.lineSplit}></View>
 
-                <Pressable onPress={() => { handleLoginTypeSwitch('email') }} disabled={loading} style={styles.touchableHighlightSecondary}>
+                <TouchableHighlight onPress={() => { handleLoginTypeSwitch('email') }} disabled={loading} style={styles.touchableHighlightSecondary}>
                     <View style={styles.thirdButton}>
                         <Text style={styles.thirdButtonText}>
                             {formatMessage({
@@ -142,7 +159,7 @@ export default function Login(props) {
                             })}
                         </Text>
                     </View>
-                </Pressable>
+                </TouchableHighlight>
             </View>
         </View>
     )
@@ -248,5 +265,9 @@ const styles = StyleSheet.create({
     lineSplit: {
         width: 1,
         backgroundColor: '#245798'
+    },
+    nameField: {
+        flexDirection: 'row',
+        // justifyContent:'space-between'
     }
 })

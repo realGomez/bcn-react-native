@@ -1,7 +1,7 @@
 import React, { Fragment } from 'react';
 import { number, string, shape } from 'prop-types';
 import { useIntl } from 'react-intl';
-import { View, Button, Text, Image, StyleSheet, Modal, TouchableHighlight } from 'react-native';
+import { View, Button, Text, Image, StyleSheet, Modal, Pressable, TouchableHighlight } from 'react-native';
 import IntlPatches from '../../utils/intlPatches';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
@@ -41,13 +41,13 @@ const ModalPopup = props => {
                     </View>
 
                     <View>
-                        <TouchableHighlight onPress={handleCancel} style={styles.touchableHighlight}>
+                        <Pressable onPress={handleCancel} style={styles.touchableHighlight}>
                             <View style={styles.secondaryButton}>
                                 <Text style={styles.secondaryButtonText}>
                                     {cancelText}
                                 </Text>
                             </View>
-                        </TouchableHighlight>
+                        </Pressable>
                     </View>
                 </View>
                 <View style={styles.toolbar}>

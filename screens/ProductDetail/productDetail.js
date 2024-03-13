@@ -9,6 +9,7 @@ import CmsRender from '../../components/CmsRender/cmsRender';
 import Options from '../../components/ProductOptions';
 import globalcss from '../../globalcss';
 import { FormattedMessage, useIntl } from 'react-intl';
+import FormError from '../../components/FormError/formError';
 
 
 export default function ProductDetail(props) {
@@ -27,6 +28,7 @@ export default function ProductDetail(props) {
     const talons = useProductDetail({ sku })
 
     const {
+        errors,
         product,
         optionSelections,
         optionCodes,
@@ -120,6 +122,8 @@ export default function ProductDetail(props) {
                             errorList={errorList}
                         />
                     </View> : null}
+
+                    <FormError errors={Array.from(errors.values())} />
 
                     <TouchableHighlight onPress={handleAddProductToCart} disabled={loading} style={styles.touchableHighlight}>
                         <View style={styles.primaryButton}>

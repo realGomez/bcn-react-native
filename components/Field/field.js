@@ -64,7 +64,8 @@ const styles = StyleSheet.create({
 
     },
     field: {
-        marginBottom: globalcss.indent_m
+        marginBottom: globalcss.indent_m,
+        flexGrow:1
     },
     label: {
         marginBottom: 5
